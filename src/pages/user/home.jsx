@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 
 // Terima prop onStart dari App.jsx
-function Home({ onStart, onLogin }) {
+function Home({ onStart, onLogin, testimonialsData }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   return (
     // Background utama halaman
     <div className="min-h-screen bg-[#0D0D0D] text-white font-sans flex justify-center p-3 md:p-5 md:pt-0 relative">
@@ -23,10 +24,16 @@ function Home({ onStart, onLogin }) {
           {/* 2. Bagian Kanan: Menu & Tombol Login KHUSUS DESKTOP */}
           <div className="hidden md:flex items-center gap-10">
             <div className="flex items-center gap-8 text-[14px] font-medium text-zinc-300">
-              <a href="#" className="hover:text-[#D5A77A] transition-colors">
+              <a
+                href="#services"
+                className="hover:text-[#D5A77A] transition-colors"
+              >
                 Services
               </a>
-              <a href="#" className="hover:text-[#D5A77A] transition-colors">
+              <a
+                href="#testimoni"
+                className="hover:text-[#D5A77A] transition-colors"
+              >
                 Testimoni
               </a>
               <a href="#" className="hover:text-[#D5A77A] transition-colors">
@@ -100,19 +107,22 @@ function Home({ onStart, onLogin }) {
             {/* Jarak atas agar tidak menabrak ikon X */}
             <div className="mt-16 flex flex-col gap-6">
               <a
-                href="#"
+                onClick={() => setIsMenuOpen(false)}
+                href="#services"
                 className="text-[16px] font-medium text-zinc-300 hover:text-[#D5A77A] transition-colors"
               >
                 Services
               </a>
               <a
+                onClick={() => setIsMenuOpen(false)}
                 href="#"
                 className="text-[16px] font-medium text-zinc-300 hover:text-[#D5A77A] transition-colors capitalize"
               >
                 About
               </a>
               <a
-                href="#"
+                onClick={() => setIsMenuOpen(false)}
+                href="#testimoni"
                 className="text-[16px] font-medium text-zinc-300 hover:text-[#D5A77A] transition-colors"
               >
                 Testimoni
@@ -154,8 +164,8 @@ function Home({ onStart, onLogin }) {
           </div>
         </main>
 
-        {/* PORTFOLIO SECTION */}
-        <section className="mb-24">
+        {/* SERVICES SECTION */}
+        <section id="services" className="mb-24 scroll-mt-24">
           <div className="flex justify-between items-end mb-6">
             <h3 className="text-lg font-bold">Services</h3>
             <a
@@ -224,6 +234,51 @@ function Home({ onStart, onLogin }) {
             </div>
           </div>
         </section>
+
+        {/* TESTIMONI SECTION */}
+        <div
+          id="testimoni"
+          className="scroll-mt-24 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto mb-15"
+        >
+          {testimonialsData.map((testi) => (
+            <div
+              key={testi.id}
+              className="bg-[#1A1A1A] p-6 rounded-3xl border..."
+            >
+              {/* Bintang Rating */}
+              <div className="flex gap-1 mb-4">
+                {[...Array(5)].map((_, index) => (
+                  <span
+                    key={index}
+                    className={`material-symbols-outlined !text-[18px] ${
+                      index < testi.rating ? "text-[#E7B481]" : "text-zinc-700"
+                    }`}
+                  >
+                    star
+                  </span>
+                ))}
+              </div>
+
+              {/* Teks Ulasan */}
+              <p className="text-zinc-300 text-sm leading-relaxed mb-6 flex-1 italic">
+                "{testi.review}"
+              </p>
+
+              {/* Profil Pelanggan */}
+              <div className="flex items-center gap-3 pt-4 border-t border-white/5 mt-auto">
+                <div className="w-10 h-10 bg-zinc-800 rounded-full flex items-center justify-center font-bold text-zinc-400">
+                  {testi.name.charAt(0)}
+                </div>
+                <div>
+                  <h4 className="font-bold text-white text-sm">{testi.name}</h4>
+                  <p className="text-[#E7B481] text-xs font-medium mt-0.5">
+                    {testi.role}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
 
         {/* FOOTER SECTION */}
         <footer className="pt-9 border-t border-zinc-800 pb-8">

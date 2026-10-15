@@ -1,14 +1,29 @@
 import React, { useState } from "react";
+import { api, saveSession } from "../../services/api";
 
 function SignUpUser({ onBack, onSignUpSuccess, onNavigateToLogin }) {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
 
-  const handleSignUp = (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
-    if (username && email && password) {
+    try {
+      const res = await api("/register", {
+        method: "POST",
+        body: {
+          name: username,
+          email,
+          phone: phone === "" ? null : phone,
+          password,
+        },
+      });
+      saveSession(res.data.token, res.data.user);
       onSignUpSuccess("user");
+    } catch (error) {
+      alert(error.message);
+      console.error("Detail Error:", error.errors);
     }
   };
 
@@ -93,6 +108,23 @@ function SignUpUser({ onBack, onSignUpSuccess, onNavigateToLogin }) {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full bg-[#161618] border border-zinc-800 rounded-xl px-4 py-4 text-sm text-white focus:outline-none focus:border-[#E7B481] transition-colors"
+                  required
+                />
+              </div>
+
+              {/* Input No Telepon */}
+              <div>
+                <label className="block text-xs font-semibold text-[#E7B481] mb-2 uppercase tracking-wider">
+                  No Telepon
+                </label>
+                <input
+                  type="tel"
+                  placeholder="0811021931"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="w-full bg-[#161618] border border-zinc-800 rounded-xl px-4 py-4 text-sm text-white focus:outline-none focus:border-[#E7B481] transition-colors"
+                  minLength="8"
+                  maxLength="15"
                   required
                 />
               </div>

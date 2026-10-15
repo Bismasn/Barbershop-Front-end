@@ -86,9 +86,9 @@ function BookingDetail({ onBack, onConfirm, service, bookingData }) {
   };
 
   return (
-    <div className="min-h-screen bg-[#0D0D0D] text-white font-sans p-6 md:p-10 flex justify-center items-center overflow-y-auto">
+    <div className="min-h-screen bg-[#0D0D0D] text-white font-sans p-6 md:p-10 flex  overflow-y-auto">
       {/* Kontainer Utama max-w-6xl */}
-      <div className="w-full max-w-6xl mx-auto flex flex-col justify-between">
+      <div className="w-full max-w-6xl mx-auto flex flex-col">
         {/* 1. TOP HEADER & TOMBOL KEMBALI */}
         <div className="flex items-center gap-4 mb-6">
           <button
@@ -227,15 +227,7 @@ function BookingDetail({ onBack, onConfirm, service, bookingData }) {
               </div>
 
               {/* Rincian Harga */}
-              <div className="border-t border-zinc-800 pt-4 flex flex-col gap-2 text-xs md:text-sm">
-                <div className="flex justify-between text-zinc-400">
-                  <span>Subtotal</span>
-                  <span>{formatRupiah(rawPrice)}</span>
-                </div>
-                <div className="flex justify-between text-zinc-400">
-                  <span>Tax 10%</span>
-                  <span>{formatRupiah(tax)}</span>
-                </div>
+              <div className=" pt-4 flex flex-col gap-2 text-xs md:text-sm">
                 <div className="flex justify-between font-black text-sm md:text-base text-white mt-2 pt-2 border-t border-zinc-800">
                   <span className="text-[#E7B481]">TOTAL PRICE:</span>
                   <span className="text-[#E7B481]">

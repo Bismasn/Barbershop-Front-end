@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { api, saveSession } from "../../services/api";
 
 function Login({ onBack, onLoginSuccess, onNavigateToSignUp }) {
   // State untuk form
@@ -8,12 +9,26 @@ function Login({ onBack, onLoginSuccess, onNavigateToSignUp }) {
   // State untuk mengontrol tampilan form ("login" atau "forgot")
   const [view, setView] = useState("login");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (view === "login") {
       // Logic jika sedang Login
-      if (email && password) {
-        onLoginSuccess("user");
+      try {
+        // 1. Tembak API Login bawaan Richi
+        const res = await api("/login", {
+          method: "POST",
+          body: { email, password },
+        });
+
+        // 2. Simpan token ke "brankas" browser (localStorage)
+        saveSession(res.data.token, res.data.user);
+
+        // 3. Lempar role ke App.jsx supaya diarahkan ke halaman yang benar
+        // Ingat: Backend Richi menggunakan nama role "customer" (bukan "user") dan "admin"
+        onLoginSuccess(res.data.user.role);
+      } catch (error) {
+        // 4. Tangkap dan tampilkan pesan error dari backend (misal: "Email atau password salah.")
+        alert(error.message);
       }
     } else {
       // Logic jika sedang Forgot Password

@@ -118,7 +118,15 @@ function App() {
       {currentPage === "login" && (
         <Login
           onBack={() => setCurrentPage("home")}
-          onLoginSuccess={() => setCurrentPage("dashboard")}
+          onLoginSuccess={(role) => {
+            if (role === "admin") {
+              setAppMode("admin");
+              setCurrentPage("admindashboard");
+            } else if (role === "customer") {
+              setAppMode("user");
+              setCurrentPage("dashboard");
+            }
+          }}
           onNavigateToSignUp={() => setCurrentPage("signup")}
         />
       )}

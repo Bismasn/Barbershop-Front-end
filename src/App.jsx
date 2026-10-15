@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Home from "./pages/user/home";
+import SignUpUser from "./pages/user/SignUpUser";
 import Login from "./pages/user/Login";
 import Dashboard from "./pages/user/Dashboard";
 import Booking from "./pages/user/Booking";
@@ -46,18 +47,39 @@ function App() {
     {
       id: 1,
       name: "Signature Cut",
+      description: "Potongan rambut presisi dengan styling premium.",
       price: "Rp 50.000",
       duration: "45 Min",
       icon: "content_cut",
+      badge: "Popular",
     },
     {
       id: 2,
       name: "Spa",
+      description: "Pijat relaksasi seluruh tubuh dengan aromaterapi.",
       price: "Rp 120.000",
       duration: "60 Min",
       icon: "spa",
+      badge: "Relax",
     },
-    // dan seterusnya...
+    {
+      id: 3,
+      name: "Coloring",
+      description: "Pewarnaan rambut profesional tahan lama.",
+      price: "Rp 150.000",
+      duration: "90 Min",
+      icon: "palette",
+      badge: "Color",
+    },
+    {
+      id: 4,
+      name: "Nails",
+      description: "Manicure & pedicure dengan sentuhan elegan.",
+      price: "Rp 75.000",
+      duration: "45 Min",
+      icon: "back_hand",
+      badge: "Groom",
+    },
   ]);
 
   // ==========================================
@@ -97,6 +119,18 @@ function App() {
         <Login
           onBack={() => setCurrentPage("home")}
           onLoginSuccess={() => setCurrentPage("dashboard")}
+          onNavigateToSignUp={() => setCurrentPage("signup")}
+        />
+      )}
+
+      {currentPage === "signup" && (
+        <SignUpUser
+          onBack={() => setCurrentPage("home")}
+          onNavigateToLogin={() => setCurrentPage("login")}
+          onSignUpSuccess={(role) => {
+            setAppMode("user");
+            setCurrentPage("dashboard");
+          }}
         />
       )}
 

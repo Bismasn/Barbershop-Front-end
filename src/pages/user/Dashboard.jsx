@@ -1,44 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 
-function Dashboard({ onBack, onNavigate }) {
-  const servicesList = [
-    {
-      id: 1,
-      name: "Signature Cut",
-      description: "Potongan rambut presisi dengan styling premium.",
-      price: "Rp 50.000",
-      duration: "45 Min",
-      icon: "content_cut",
-      badge: "Popular",
-    },
-    {
-      id: 2,
-      name: "Spa",
-      description: "Pijat relaksasi seluruh tubuh dengan aromaterapi.",
-      price: "Rp 120.000",
-      duration: "60 Min",
-      icon: "spa",
-      badge: "Relax",
-    },
-    {
-      id: 3,
-      name: "Coloring",
-      description: "Pewarnaan rambut profesional tahan lama.",
-      price: "Rp 150.000",
-      duration: "90 Min",
-      icon: "palette",
-      badge: "Color",
-    },
-    {
-      id: 4,
-      name: "Nails",
-      description: "Manicure & pedicure dengan sentuhan elegan.",
-      price: "Rp 75.000",
-      duration: "45 Min",
-      icon: "back_hand",
-      badge: "Groom",
-    },
-  ];
+function Dashboard({ onBack, services, onNavigate }) {
+  const [activeMenu, setActiveMenu] = useState("Home");
   return (
     <div className="min-h-screen bg-[#0D0D0D] text-white font-sans p-6 md:p-10 flex justify-center overflow-y-auto">
       {/* Kontainer Utama mengikuti batas max-w-6xl seperti App.jsx */}
@@ -113,7 +76,7 @@ function Dashboard({ onBack, onNavigate }) {
 
             {/* SERVICES SECTION (Diubah menjadi Button Interaktif) */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {servicesList.map((item) => (
+              {services.map((item) => (
                 <div
                   key={item.id}
                   // Panggil fungsi ketika card diklik, contoh: meneruskan data item ke halaman booking

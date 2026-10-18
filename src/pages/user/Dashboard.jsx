@@ -1,9 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import UserProfile from "./UserProfile";
 
 function Dashboard({ onBack, services, onNavigate }) {
   const [activeMenu, setActiveMenu] = useState("Home");
+  const [userName, setUserName] = useState("User");
+
+  useEffect(() => {
+    const storedUserStr = localStorage.getItem("user");
+    if (storedUserStr) {
+      try {
+        const parsedUser = JSON.parse(storedUserStr);
+        if (parsedUser.name) {
+          setUserName(parsedUser.name);
+        }
+      } catch (error) {
+        console.err("gagal membaca nama user:", error);
+      }
+    }
+  }, []);
+
   return (
-    <div className="min-h-screen bg-[#0D0D0D] text-white font-sans p-6 md:p-10 flex justify-center overflow-y-auto">
+    <div className="min-h-screen bg-[#0D0D0D] text-white font-sans p-6 md:p-10 flex justify-center overflow-x-hidden overflow-y-auto">
       {/* Kontainer Utama mengikuti batas max-w-6xl seperti App.jsx */}
       <div className="w-full max-w-6xl mx-auto flex flex-col ">
         {/* 1. TOP HEADER */}
@@ -27,25 +44,23 @@ function Dashboard({ onBack, services, onNavigate }) {
             </svg>
           </button>
           <div className="flex">
-            <div className="text-right mr-3">
-              <p className="text-[11px] text-zinc-400">User</p>
-              <h2 className="text-sm font-bold tracking-wide">DamBro</h2>
+            <div className="text-right mr-5">
+              <button
+                onClick={() => onNavigate("profile")}
+                className="w-10 h-10 rounded-full bg-[#E7B481}items-center justify-center cursor-pointer"
+              >
+                <p className="text-[11px] text-zinc-400 mr-4">User</p>
+                <h2 className="text-sm font-bold tracking-wide">{userName}</h2>
+              </button>
             </div>
 
             <div className="w-10 h-10 bg-[#E7B481] rounded-full flex items-center justify-center text-black font-bold text-sm">
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+              <button
+                onClick={() => onNavigate("profile")}
+                className="w-10 h-10 rounded-full bg-[#E7B481}items-center justify-center cursor-pointer"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                />
-              </svg>
+                <svg></svg>
+              </button>
             </div>
           </div>
         </div>
@@ -76,52 +91,71 @@ function Dashboard({ onBack, services, onNavigate }) {
 
             {/* SERVICES SECTION (Diubah menjadi Button Interaktif) */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {services.map((item) => (
-                <div
-                  key={item.id}
-                  // Panggil fungsi ketika card diklik, contoh: meneruskan data item ke halaman booking
-                  onClick={() => {
-                    onNavigate("booking", item);
-                  }}
-                  className="bg-[#1A1A1A] p-5 rounded-2xl flex flex-col h-full min-h-[160px] border border-white/5 hover:border-[#E7B481]/30 transition-all cursor-pointer group"
-                >
-                  {/* Bagian Atas: Ikon & Badge */}
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="w-12 h-12 bg-[#E7B481] rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                      <span className="material-symbols-outlined text-black !text-2xl">
-                        {item.icon}
-                      </span>
-                    </div>
-                    <span className="bg-[#E7B481]/10 text-[#E7B481] text-xs px-3 py-1 rounded-full font-medium border border-[#E7B481]/20">
-                      {item.badge}
-                    </span>
-                  </div>
-
-                  {/* Bagian Bawah: Judul, Deskripsi, Harga, & Durasi */}
-                  <div className="mt-auto flex flex-col gap-2">
-                    <div>
-                      <h3 className="font-bold text-lg text-white group-hover:text-[#E7B481] transition-colors">
-                        {item.name}
-                      </h3>
-                      <p className="text-zinc-400 text-xs leading-relaxed mt-1">
-                        {item.description}
-                      </p>
-                    </div>
-
-                    <div className="flex justify-between items-center mt-3 pt-3 border-t border-white/5">
-                      <span className="text-white font-bold text-sm">
-                        {item.price}
-                      </span>
-                      <span className="text-zinc-500 text-xs flex items-center gap-1">
-                        <span className="material-symbols-outlined !text-[14px]">
-                          schedule
+              {/* Tambahkan pengecekan if services ada */}
+              {services && services.length > 0 ? (
+                services.map((item) => (
+                  <div
+                    key={item.id}
+                    onClick={() => {
+                      onNavigate("booking", item);
+                    }}
+                    className="bg-[#1A1A1A] p-5 rounded-2xl flex flex-col h-full min-h-[160px] border border-white/5 hover:border-[#E7B481]/30 transition-all cursor-pointer group"
+                  >
+                    {/* Bagian Atas: Ikon & Badge */}
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="w-12 h-12 bg-[#E7B481] rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                        <span className="material-symbols-outlined text-black !text-2xl">
+                          {/* Fallback Icon jika dari backend kosong */}
+                          {item.icon || "content_cut"}
                         </span>
-                        {item.duration}
-                      </span>
+                      </div>
+                    </div>
+
+                    <div className="mt-auto flex flex-col gap-2">
+                      {/* Tampilkan Badge HANYA jika ada datanya */}
+                      {item.badge && (
+                        <span className="bg-[#E7B481]/10 text-[#E7B481] text-xs px-3 py-1 rounded-full font-medium border border-[#E7B481]/20">
+                          {item.badge}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Bagian Bawah: Judul, Deskripsi, Harga, & Durasi */}
+                    <div className="mt-auto flex flex-col gap-2">
+                      <div>
+                        <h3 className="font-bold text-lg text-white group-hover:text-[#E7B481] transition-colors">
+                          {item.name}
+                        </h3>
+                        <p className="text-zinc-400 text-xs leading-relaxed mt-1">
+                          {item.description}
+                        </p>
+                      </div>
+
+                      <div className="flex justify-between items-center mt-3 pt-3 border-t border-white/5">
+                        <span className="text-white font-bold text-sm">
+                          {/* PERBAIKAN: Format angka price dari API menjadi format Rupiah */}
+                          {new Intl.NumberFormat("id-ID", {
+                            style: "currency",
+                            currency: "IDR",
+                            maximumFractionDigits: 0,
+                          }).format(item.price || 0)}
+                        </span>
+                        <span className="text-zinc-500 text-xs flex items-center gap-1">
+                          <span className="material-symbols-outlined !text-[14px]">
+                            schedule
+                          </span>
+                          {/* PERBAIKAN: Gunakan duration_minutes sesuai nama di backend */}
+                          {item.duration_minutes || "0"} Min
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                <p className="text-zinc-400 text-sm">
+                  Belum ada layanan tersedia.
+                </p>
+              )}
             </div>
           </div>
 

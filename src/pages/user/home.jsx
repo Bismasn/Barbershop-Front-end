@@ -1,8 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, use } from "react";
 
 // Terima prop onStart dari App.jsx
-function Home({ onStart, onLogin, testimonialsData }) {
+function Home({ onNavigate, onLogin, testimonialsData }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userName, setUserName] = useState("");
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const userStr = localStorage.getItem("user");
+
+    if (token && userStr) {
+      setIsLoggedIn(true);
+      try {
+        const user = JSON.parse(userStr);
+        setUserName(user.name || "User");
+      } catch (e) {
+        // abaikan
+      }
+    } else {
+      setIsLoggedIn(false);
+    }
+  }, []);
 
   return (
     // Background utama halaman
@@ -21,7 +40,7 @@ function Home({ onStart, onLogin, testimonialsData }) {
             </span>
           </div>
 
-          {/* 2. Bagian Kanan: Menu & Tombol Login KHUSUS DESKTOP */}
+          {/* 2. Bagian Kanan: Menu & Tombol Login/Dashboard KHUSUS DESKTOP */}
           <div className="hidden md:flex items-center gap-10">
             <div className="flex items-center gap-8 text-[14px] font-medium text-zinc-300">
               <a
@@ -40,20 +59,30 @@ function Home({ onStart, onLogin, testimonialsData }) {
                 About
               </a>
             </div>
-            <button
-              onClick={onLogin}
-              className="bg-[#E7B481] text-black px-8 py-2.5 rounded-full font-bold text-sm hover:bg-[#d4a270] active:scale-95 transition-all"
-            >
-              Log In
-            </button>
+
+            {/* LOGIKA TOMBOL PINTAR (DESKTOP) */}
+            {isLoggedIn ? (
+              <button
+                onClick={() => onNavigate("dashboard")}
+                className="bg-[#E7B481] text-black px-8 py-2.5 rounded-full font-bold text-sm hover:bg-[#d4a270] active:scale-95 transition-all flex items-center gap-2"
+              >
+                Dashboard {userName.split(" ")[0]}
+              </button>
+            ) : (
+              <button
+                onClick={onLogin}
+                className="bg-[#E7B481] text-black px-8 py-2.5 rounded-full font-bold text-sm hover:bg-[#d4a270] active:scale-95 transition-all"
+              >
+                Log In
+              </button>
+            )}
           </div>
 
-          {/* 3. Tombol Hamburger Menu KHUSUS MOBILE (Dikeluarkan dari div desktop) */}
+          {/* 3. Tombol Hamburger Menu KHUSUS MOBILE */}
           <button
             className="md:hidden flex items-center text-white relative z-[60]"
-            onClick={() => setIsMenuOpen(!isMenuOpen)} // PERBAIKAN: Tambah tanda ! di sini
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
-            {/* ikon berubah menjadi 'X' jika menu terbuka dan 3 garis jika menu tertutup */}
             {isMenuOpen ? (
               <svg
                 className="w-7 h-7"
@@ -85,26 +114,20 @@ function Home({ onStart, onLogin, testimonialsData }) {
             )}
           </button>
 
-          {/* 4. Kotak Dropdown Menu Mobile (Dikeluarkan dari div desktop) */}
-          <div
-            className={`fixed inser-0 bg=black/60 z-40 transition-opacity duration-300 md:hidden $ {
-            isMenuOpen ?"opacity-100 visible" : "opacity-0 invisible}`}
-            onClick={() => setIsMenuOpen(false)}
-          ></div>
-          {/* Overlay Hitam Transparan di belakang menu */}
+          {/* Overlay Hitam Transparan di belakang menu (Hapus duplikat yang ada typ-onya) */}
           <div
             className={`fixed inset-0 bg-black/70 z-40 transition-opacity duration-300 md:hidden ${
               isMenuOpen ? "opacity-100 visible" : "opacity-0 invisible"
             }`}
             onClick={() => setIsMenuOpen(false)}
           ></div>
-          {/* 5. Panel Sidebar Mobile (Geser dari kanan) */}
+
+          {/* 4. Panel Sidebar Mobile (Geser dari kanan) */}
           <div
             className={`fixed top-0 right-0 h-full w-[250px] bg-[#1a1a1c] z-50 p-8 shadow-2xl border-l border-zinc-800 flex flex-col gap-6 md:hidden transform transition-transform duration-300 ease-in-out ${
               isMenuOpen ? "translate-x-0" : "translate-x-full"
             }`}
           >
-            {/* Jarak atas agar tidak menabrak ikon X */}
             <div className="mt-16 flex flex-col gap-6">
               <a
                 onClick={() => setIsMenuOpen(false)}
@@ -128,15 +151,29 @@ function Home({ onStart, onLogin, testimonialsData }) {
                 Testimoni
               </a>
               <div className="w-full h-[1px] bg-zinc-800 my-2"></div>
-              <button
-                onClick={() => {
-                  setIsMenuOpen(false);
-                  if (onLogin) onLogin();
-                }}
-                className="bg-[#E7B481] text-black w-full py-3 rounded-full font-bold text-sm hover:bg-[#d4a270] transition-colors"
-              >
-                Log In
-              </button>
+
+              {/* LOGIKA TOMBOL PINTAR (MOBILE) */}
+              {isLoggedIn ? (
+                <button
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    onNavigate("dashboard");
+                  }}
+                  className="bg-[#E7B481] text-black w-full py-3 rounded-full font-bold text-sm hover:bg-[#d4a270] transition-colors"
+                >
+                  Dashboard {userName.split(" ")[0]}
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    if (onLogin) onLogin();
+                  }}
+                  className="bg-[#E7B481] text-black w-full py-3 rounded-full font-bold text-sm hover:bg-[#d4a270] transition-colors"
+                >
+                  Log In
+                </button>
+              )}
             </div>
           </div>
         </nav>
@@ -156,7 +193,19 @@ function Home({ onStart, onLogin, testimonialsData }) {
               detail yang terasa mewah.
             </p>
             <button
-              onClick={onLogin}
+              type="button"
+              onClick={() => {
+                const token = localStorage.getItem("token");
+                if (token) {
+                  onNavigate("dashboard");
+                } else {
+                  if (onLogin) {
+                    onLogin();
+                  } else {
+                    onNavigate("login");
+                  }
+                }
+              }}
               className="bg-[#D5A77A] text-black px-12 py-3.5 rounded-sm text-[15px] font-bold hover:bg-[#c4986b] transition-all active:scale-95 uppercase tracking-wider"
             >
               Reservasi

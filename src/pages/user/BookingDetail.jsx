@@ -1,26 +1,27 @@
 import React, { useState } from "react";
+// Pastikan path api.js ini sesuai. Jika salah folder, ganti jadi "../../api"
+import { api } from "../../services/api";
 
-function BookingDetail({ onBack, onConfirm, service, bookingData }) {
+function BookingDetail({ onBack, onConfirmSuccess, service, bookingData }) {
   const [paymentMethod, setPaymentMethod] = useState("QRIS");
+  // TAMBAHAN: Deklarasi state loading yang sebelumnya terlupa
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Hitung total harga otomatis (misal harga layanan + pajak 10%)
-  const rawPrice = service
-    ? parseInt(service.price.replace(/[^0-9]/g, "")) || 50000
-    : 50000;
-  const tax = rawPrice * 0.1;
-  const totalPrice = rawPrice + tax; // Fungsi untuk mendeteksi nama hari berdasarkan tanggal yang dipilih
+  // Hitung total harga otomatis (HANYA UNTUK TAMPILAN UI DI REACT)
+  // Backend akan menghitung pajaknya sendiri nanti
+  // const rawPrice = service?.price || 50000;
+  // const tax = rawPrice * 0.1;
+  // const totalPrice = rawPrice + tax;
 
+  //Aku ganti menjadi ini
+  const rawPrice = service?.price || 0;
+  const totalPrice = rawPrice;
   const getDayName = (dateNum) => {
-    // Contoh mapping tanggal ke hari (sesuai array di Booking.jsx)
-    const daysMap = {
-      12: "Monday",
-      13: "Tuesday",
-      14: "Wednesday",
-      15: "Thursday",
-      16: "Friday",
-      17: "Saturday",
-    };
-    return daysMap[dateNum] || "Thursday";
+    // Karena sekarang bookingData.date formatnya "YYYY-MM-DD" (dari Booking.jsx)
+    // Kita buat pendeteksi hari yang lebih canggih menggunakan Date Object
+    if (!dateNum) return "Hari ini";
+    const dateObj = new Date(dateNum);
+    return dateObj.toLocaleDateString("id-ID", { weekday: "long" });
   };
 
   const currentDay = getDayName(bookingData?.date);
@@ -32,53 +33,42 @@ function BookingDetail({ onBack, onConfirm, service, bookingData }) {
       maximumFractionDigits: 0,
     })
       .format(number)
-      .replace("IDR", "Rp.");
+      .replace("IDR", "Rp");
   };
 
-  // Fungsi untuk mengirim data ke Backend Laravel via Fetch API
+  // Fungsi untuk mengirim data ke Backend Laravel via API Helper
   const handleConfirmOrder = async () => {
     setIsLoading(true);
 
-    // Data yang akan dikirim ke Laravel API
+    // REVISI FATAL 1: Data yang dikirim HARUS sesuai aturan Laravel Richi
     const payload = {
-      service_name: service?.name || "Signature Cut",
-      duration: service?.duration || "45 min",
-      price: rawPrice,
-      booking_date: bookingData?.date || "15",
-      booking_time: bookingData?.time || "10:00 AM",
-      notes: bookingData?.notes || "-",
-      payment_method: paymentMethod,
-      total_price: totalPrice,
+      service_id: service?.id, // Wajib dikirim
+      booking_date: bookingData?.date, // Format YYYY-MM-DD
+      booking_time: bookingData?.time, // Format HH:mm
+      notes: bookingData?.notes || "",
+      payment_method: paymentMethod, // CASH / QRIS
     };
 
     try {
-      // Sesuaikan URL endpoint Laravel kamu (misal: http://localhost:8000/api/bookings)
-      const response = await fetch("http://localhost:8000/api/bookings", {
+      // REVISI FATAL 2: Gunakan fungsi api() dan tembak ke endpoint /reservations
+      const response = await api("/reservations", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify(payload),
+        body: payload,
       });
 
-      const result = await response.json();
+      // Jika berhasil
+      alert(
+        `Booking berhasil disimpan!\nKode Booking: ${response.data.booking_code}`,
+      );
 
-      if (response.ok) {
-        alert("Booking berhasil disimpan ke database Laravel!");
-        // Jika ingin langsung pindah halaman/sukses, panggil fungsi callback jika ada
-        if (onConfirmSuccess) {
-          onConfirmSuccess(result);
-        }
-      } else {
-        alert(
-          `Gagal menyimpan booking: ${result.message || "Terjadi kesalahan"}`,
-        );
+      // Jika ingin langsung pindah halaman/sukses, panggil fungsi callback jika ada
+      if (onConfirmSuccess) {
+        onConfirmSuccess(response.data);
       }
     } catch (error) {
       console.error("Gagal terhubung ke server Laravel:", error);
       alert(
-        "Tidak dapat terhubung ke server backend. Pastikan Laravel sudah menyala!",
+        `Gagal menyimpan booking: ${error.message || "Pastikan Laravel & Tailscale sudah menyala!"}`,
       );
     } finally {
       setIsLoading(false);
@@ -120,7 +110,7 @@ function BookingDetail({ onBack, onConfirm, service, bookingData }) {
           </div>
         </div>
 
-        {/* 2. KONTEN UTAMA (Layout Grid Responsif) */}
+        {/* 2. KONTEN UTAMA */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
           {/* Kolom Kiri: Ringkasan Pesanan & Info Customer */}
           <div className="flex flex-col gap-6">
@@ -128,19 +118,9 @@ function BookingDetail({ onBack, onConfirm, service, bookingData }) {
             <div className="bg-[#1c1c1e] border border-zinc-800 rounded-2xl p-4 md:p-5 flex items-center justify-between">
               <div className="flex items-center gap-3.5">
                 <div className="w-12 h-12 bg-[#E7B481] rounded-2xl flex items-center justify-center text-black font-bold">
-                  <svg
-                    className="w-6 h-6"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243 4.243 3 3 0 004.243-4.243z"
-                    />
-                  </svg>
+                  <span className="material-symbols-outlined !text-2xl">
+                    {service?.icon || "content_cut"}
+                  </span>
                 </div>
                 <div>
                   <span className="text-[10px] text-zinc-400 uppercase tracking-wider font-semibold">
@@ -150,9 +130,8 @@ function BookingDetail({ onBack, onConfirm, service, bookingData }) {
                     {service?.name || "Signature Cut"}
                   </h3>
                   <p className="text-xs text-zinc-400">
-                    {currentDay}, {bookingData?.date || "15"} Oct,{" "}
-                    {bookingData?.time || "10:00 AM"} (
-                    {service?.duration || "45 min"})
+                    {currentDay}, {bookingData?.date} • {bookingData?.time} (
+                    {service?.duration_minutes || "0"} min)
                   </p>
                 </div>
               </div>
@@ -170,12 +149,12 @@ function BookingDetail({ onBack, onConfirm, service, bookingData }) {
               <span className="text-[10px] text-zinc-400 uppercase tracking-wider font-semibold block mb-2">
                 Customer Info
               </span>
+              {/* Note: Nama tidak perlu dikirim ke backend, karena backend membacanya otomatis dari Token JWT */}
               <p className="text-xs md:text-sm text-white font-medium">
-                Nama Pelanggan: DamBro
+                Akun Pengguna
               </p>
               <p className="text-xs text-zinc-400 mt-1">
-                Notes:{" "}
-                {bookingData?.notes || "Request Potong Pendek, Biar rapi"}
+                Notes: {bookingData?.notes || "-"}
               </p>
             </div>
 
@@ -200,15 +179,14 @@ function BookingDetail({ onBack, onConfirm, service, bookingData }) {
               <span className="text-[10px] text-zinc-400 uppercase tracking-wider font-semibold block mb-3">
                 Payments Method
               </span>
-
               <div className="grid grid-cols-2 gap-3 mb-5">
                 <button
                   type="button"
                   onClick={() => setPaymentMethod("CASH")}
                   className={`py-3.5 rounded-xl font-bold text-xs md:text-sm transition-all cursor-pointer border ${
                     paymentMethod === "CASH"
-                      ? "bg-[#E7B481] text-black border-[#E7B481]" // <-- Coklat saat dipilih
-                      : "bg-zinc-800 text-zinc-400 border-zinc-700 hover:bg-zinc-700" // <-- Abu-abu saat tidak dipilih
+                      ? "bg-[#E7B481] text-black border-[#E7B481]"
+                      : "bg-zinc-800 text-zinc-400 border-zinc-700 hover:bg-zinc-700"
                   }`}
                 >
                   CASH
@@ -218,8 +196,8 @@ function BookingDetail({ onBack, onConfirm, service, bookingData }) {
                   onClick={() => setPaymentMethod("QRIS")}
                   className={`py-3.5 rounded-xl font-bold text-xs md:text-sm transition-all cursor-pointer border ${
                     paymentMethod === "QRIS"
-                      ? "bg-[#E7B481] text-black border-[#E7B481]" // <-- Coklat saat dipilih
-                      : "bg-zinc-800 text-zinc-400 border-zinc-700 hover:bg-zinc-700" // <-- Abu-abu saat tidak dipilih
+                      ? "bg-[#E7B481] text-black border-[#E7B481]"
+                      : "bg-zinc-800 text-zinc-400 border-zinc-700 hover:bg-zinc-700"
                   }`}
                 >
                   QRIS
@@ -228,6 +206,14 @@ function BookingDetail({ onBack, onConfirm, service, bookingData }) {
 
               {/* Rincian Harga */}
               <div className=" pt-4 flex flex-col gap-2 text-xs md:text-sm">
+                <div className="flex justify-between text-zinc-400">
+                  <span>Price</span>
+                  <span>{formatRupiah(rawPrice)}</span>
+                </div>
+                {/* <div className="flex justify-between text-zinc-400">
+                  <span>Tax (10%)</span>
+                  <span>{formatRupiah(tax)}</span>
+                </div> */}
                 <div className="flex justify-between font-black text-sm md:text-base text-white mt-2 pt-2 border-t border-zinc-800">
                   <span className="text-[#E7B481]">TOTAL PRICE:</span>
                   <span className="text-[#E7B481]">
@@ -240,14 +226,15 @@ function BookingDetail({ onBack, onConfirm, service, bookingData }) {
             {/* TOMBOL CONFIRM */}
             <button
               type="button"
-              onClick={() =>
-                alert(
-                  "Pesanan berhasil dikonfirmasi! Terima kasih telah memesan.",
-                )
-              }
-              className="w-full bg-[#E7B481] text-black font-extrabold py-4 rounded-2xl hover:bg-[#d4a270] active:scale-[0.99] transition-all uppercase tracking-wider text-sm shadow-lg cursor-pointer"
+              onClick={handleConfirmOrder}
+              disabled={isLoading}
+              className={`w-full font-extrabold py-4 rounded-2xl transition-all uppercase tracking-wider text-sm shadow-lg ${
+                isLoading
+                  ? "bg-[#E7B481]/50 text-black/50 cursor-wait"
+                  : "bg-[#E7B481] text-black hover:bg-[#d4a270] active:scale-[0.99] cursor-pointer"
+              }`}
             >
-              Confirm
+              {isLoading ? "Processing..." : "Confirm"}
             </button>
           </div>
         </div>

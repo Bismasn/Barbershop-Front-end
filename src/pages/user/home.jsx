@@ -1,4 +1,7 @@
-import React, { useState, useEffect, use } from "react";
+import React, { useState, useEffect } from "react";
+import StarRating from "../../components/ui/StarRating";
+import ButtonConfirm from "../../components/ui/ButtonConfirm";
+import { testimonialsData } from "../../data/testimonialsData";
 
 // Terima prop onStart dari App.jsx
 function Home({ onNavigate, onLogin, testimonialsData }) {
@@ -64,9 +67,11 @@ function Home({ onNavigate, onLogin, testimonialsData }) {
             {isLoggedIn ? (
               <button
                 onClick={() => onNavigate("dashboard")}
-                className="bg-[#E7B481] text-black px-8 py-2.5 rounded-full font-bold text-sm hover:bg-[#d4a270] active:scale-95 transition-all flex items-center gap-2"
+                className="w-10 h-10 rounded-full bg-[#E7B481] flex items-center justify-center gap-2"
               >
-                Dashboard {userName.split(" ")[0]}
+                <span className="material-symbols-outlined text-black !text-3xl leading-none select-none">
+                  Person
+                </span>
               </button>
             ) : (
               <button
@@ -192,8 +197,9 @@ function Home({ onNavigate, onLogin, testimonialsData }) {
               Premium unisex salon dengan sentuhan modern, tekstur halus, dan
               detail yang terasa mewah.
             </p>
-            <button
-              type="button"
+            <ButtonConfirm
+              type="submit"
+              className="md:w-100"
               onClick={() => {
                 const token = localStorage.getItem("token");
                 if (token) {
@@ -206,10 +212,9 @@ function Home({ onNavigate, onLogin, testimonialsData }) {
                   }
                 }
               }}
-              className="bg-[#D5A77A] text-black px-12 py-3.5 rounded-sm text-[15px] font-bold hover:bg-[#c4986b] transition-all active:scale-95 uppercase tracking-wider"
             >
               Reservasi
-            </button>
+            </ButtonConfirm>
           </div>
         </main>
 
@@ -285,43 +290,39 @@ function Home({ onNavigate, onLogin, testimonialsData }) {
         </section>
 
         {/* TESTIMONI SECTION */}
-        <div
-          id="testimoni"
-          className="scroll-mt-24 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto mb-15"
-        >
-          {testimonialsData.map((testi) => (
+        <div id="testimoni" className="scroll-mt-24 max-w-6xl mx-auto px-4">
+          <h1 className="text-xl md:text-2xl font-bold text-white text-center">
+            Apa Kata Mereka?{" "}
+          </h1>
+          <p className="mb-8 text-center text-xs mt-3">
+            Para Costumer yang sudah pernah mengunjungi BarberShop ini
+          </p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto mb-15">
+          {testimonialsData.map((item) => (
             <div
-              key={testi.id}
-              className="bg-[#1A1A1A] p-6 rounded-3xl border..."
+              key={item.id}
+              className="bg-[#1A1A1A] p-6 rounded-3xl border border-white/5 flex flex-col justify-between"
             >
-              {/* Bintang Rating */}
-              <div className="flex gap-1 mb-4">
-                {[...Array(5)].map((_, index) => (
-                  <span
-                    key={index}
-                    className={`material-symbols-outlined !text-[18px] ${
-                      index < testi.rating ? "text-[#E7B481]" : "text-zinc-700"
-                    }`}
-                  >
-                    star
-                  </span>
-                ))}
+              {/* Bintang Rating (Cukup panggil 1 kali aja) */}
+              <div className="mb-4">
+                <StarRating rating={item.rating} />
               </div>
 
               {/* Teks Ulasan */}
               <p className="text-zinc-300 text-sm leading-relaxed mb-6 flex-1 italic">
-                "{testi.review}"
+                "{item.review || item.comment}"
               </p>
 
               {/* Profil Pelanggan */}
               <div className="flex items-center gap-3 pt-4 border-t border-white/5 mt-auto">
                 <div className="w-10 h-10 bg-zinc-800 rounded-full flex items-center justify-center font-bold text-zinc-400">
-                  {testi.name.charAt(0)}
+                  {item.name ? item.name.charAt(0) : "U"}
                 </div>
                 <div>
-                  <h4 className="font-bold text-white text-sm">{testi.name}</h4>
+                  <h4 className="font-bold text-white text-sm">{item.name}</h4>
                   <p className="text-[#E7B481] text-xs font-medium mt-0.5">
-                    {testi.role}
+                    {item.role}
                   </p>
                 </div>
               </div>
@@ -346,25 +347,9 @@ function Home({ onNavigate, onLogin, testimonialsData }) {
                 <h3 className="text-[17px] font-bold mb-4">Alamat :</h3>
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 bg-white rounded-[10px] flex items-center justify-center shrink-0">
-                    <svg
-                      className="w-5 h-5 text-black"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                      />
-                    </svg>
+                    <span className="material-symbols-outlined w-5 h-5 text-black">
+                      location_on
+                    </span>
                   </div>
                   <p className="text-zinc-400 text-[13px] leading-relaxed">
                     Jl. XX No.XX Denpasar Selatan,

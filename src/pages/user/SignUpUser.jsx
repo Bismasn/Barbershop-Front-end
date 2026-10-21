@@ -1,11 +1,15 @@
 import React, { useState } from "react";
 import { api, saveSession } from "../../services/api";
+import { BackButton } from "../../components/ui/BackButton";
+import ButtonConfirm from "../../components/ui/ButtonConfirm";
+import InputField from "../../components/ui/InputField";
 
 function SignUpUser({ onBack, onSignUpSuccess, onNavigateToLogin }) {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
+  const [view, setView] = useState("signUpUser");
 
   const handleSignUp = async (e) => {
     e.preventDefault();
@@ -28,30 +32,14 @@ function SignUpUser({ onBack, onSignUpSuccess, onNavigateToLogin }) {
   };
 
   return (
-    <div className="h-screen bg-[#0D0D0D] text-white font-sans flex flex-col justify-between p-6 md:p-10 w-full overflow-hidden">
+    <div className="min-h-screen md:h-screen bg-[#0D0D0D] text-white font-sans flex flex-col justify-between p-6 md:p-10 w-full overflow-hidden">
       {/* Kontainer utama disamakan lebarnya dengan max-w-6xl seperti App.jsx */}
       <div className="max-w-6xl mx-auto w-full flex flex-col justify-between min-h-[90vh]">
         {/* Tombol Kembali (Panah Kiri di atas) */}
         <div className="w-full relative z-50">
-          <button
-            type="button"
-            onClick={onBack}
-            className="w-10 h-10 bg-[#1c1c1e] rounded-full flex items-center justify-center hover:bg-zinc-800 transition-colors cursor-pointer"
-          >
-            <svg
-              className="w-5 h-5 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M10 19l-7-7m0 0l7-7m-7 7h18"
-              />
-            </svg>
-          </button>
+          <BackButton
+            onClick={view === "signUpUser" ? () => setView("home") : onBack}
+          />
         </div>
 
         {/* Konten Utama: Lebar sejajar dengan max-w-6xl, dibagi jadi 2 kolom di laptop */}
@@ -82,75 +70,55 @@ function SignUpUser({ onBack, onSignUpSuccess, onNavigateToLogin }) {
               onSubmit={handleSignUp}
               className="w-full flex flex-col gap-5 text-left"
             >
-              {/* Input Username */}
-              <div>
-                <label className="block text-xs font-semibold text-[#E7B481] mb-2 uppercase tracking-wider">
-                  Username
-                </label>
-                <input
-                  type="text"
-                  placeholder="DenBro"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="w-full bg-[#161618] border border-zinc-800 rounded-xl px-4 py-4 text-sm text-white focus:outline-none focus:border-[#E7B481] transition-colors"
-                  required
-                />
-              </div>
+              <InputField
+                label="Username"
+                type="text"
+                placeholder="KuhakuZr"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+              />
 
-              {/* Input Email */}
-              <div>
-                <label className="block text-xs font-semibold text-[#E7B481] mb-2 uppercase tracking-wider">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  placeholder="hello@studio.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-[#161618] border border-zinc-800 rounded-xl px-4 py-4 text-sm text-white focus:outline-none focus:border-[#E7B481] transition-colors"
-                  required
-                />
-              </div>
+              <InputField
+                label="Email"
+                type="email"
+                placeholder="hello@studio.com"
+                value={email}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
 
-              {/* Input No Telepon */}
-              <div>
-                <label className="block text-xs font-semibold text-[#E7B481] mb-2 uppercase tracking-wider">
-                  No Telepon
-                </label>
-                <input
-                  type="tel"
-                  placeholder="0811021931"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="w-full bg-[#161618] border border-zinc-800 rounded-xl px-4 py-4 text-sm text-white focus:outline-none focus:border-[#E7B481] transition-colors"
-                  minLength="8"
-                  maxLength="15"
-                  required
-                />
-              </div>
+              <InputField
+                label="No Telepon"
+                type="tel"
+                placeholder="0811021931"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                required
+              />
 
-              {/* Input Password */}
-              <div>
-                <label className="block text-xs font-semibold text-[#E7B481] mb-2 uppercase tracking-wider">
-                  Password
-                </label>
-                <input
-                  type="password"
-                  placeholder="***************"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-[#161618] border border-zinc-800 rounded-xl px-4 py-4 text-sm text-white focus:outline-none focus:border-[#E7B481] transition-colors"
-                  required
-                />
-              </div>
+              <InputField
+                label="Password"
+                type="password"
+                placeholder="**************"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                minLength="8"
+                required
+              />
+
+              <InputField
+                label="Confirm Password"
+                type="password"
+                placeholder="**************"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                minLength="8"
+                required
+              />
 
               {/* Tombol Sign Up Utama */}
-              <button
-                type="submit"
-                className="w-full bg-[#E7B481] text-black font-bold py-4 rounded-xl mt-2 hover:bg-[#d4a270] active:scale-[0.99] transition-all uppercase tracking-wider text-sm shadow-lg shadow-[#E7B481]/10 cursor-pointer"
-              >
-                Sign Up
-              </button>
+              <ButtonConfirm type="submit">Sign Up</ButtonConfirm>
             </form>
 
             {/* Footer Bawah */}

@@ -1,13 +1,18 @@
 import React, { useState } from "react";
 import { api, saveSession } from "../../services/api";
+import { BackButton } from "../../components/ui/BackButton";
+import InputField from "../../components/ui/InputField";
+import ButtonConfirm from "../../components/ui/ButtonConfirm";
 
 function Login({ onBack, onLoginSuccess, onNavigateToSignUp }) {
   // State untuk form
   const [email, setEmail] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
 
   // State untuk mengontrol tampilan form ("login" atau "forgot")
   const [view, setView] = useState("login");
+  const isForgotPassword = view === "forgot";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,29 +45,13 @@ function Login({ onBack, onLoginSuccess, onNavigateToSignUp }) {
   };
 
   return (
-    <div className="h-screen bg-[#0D0D0D] text-white font-sans flex flex-col justify-between p-6 md:p-10 w-full overflow-hidden">
+    <div className="min-h-screen md:h-screen bg-[#0D0D0D] text-white font-sans flex flex-col justify-between p-6 md:p-10 w-full overflow-hidden">
       <div className="max-w-6xl mx-auto w-full flex flex-col justify-between min-h-[90vh]">
         {/* Tombol Kembali */}
         <div className="w-full relative z-50">
-          <button
-            type="button"
+          <BackButton
             onClick={view === "forgot" ? () => setView("login") : onBack}
-            className="w-10 h-10 bg-[#1c1c1e] rounded-full flex items-center justify-center hover:bg-zinc-800 transition-colors cursor-pointer"
-          >
-            <svg
-              className="w-5 h-5 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M10 19l-7-7m0 0l7-7m-7 7h18"
-              />
-            </svg>
-          </button>
+          />
         </div>
 
         <div className="flex flex-col md:flex-row items-center justify-center my-auto w-full gap-12 md:gap-15 py-5">
@@ -91,36 +80,24 @@ function Login({ onBack, onLoginSuccess, onNavigateToSignUp }) {
               onSubmit={handleSubmit}
               className="w-full flex flex-col gap-5 text-left"
             >
-              {/* Input Email (Selalu muncul di kedua mode) */}
-              <div>
-                <label className="block text-xs font-semibold text-[#E7B481] mb-2 uppercase tracking-wider">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  placeholder="hello@studio.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-[#161618] border border-zinc-800 rounded-xl px-4 py-4 text-sm text-white focus:outline-none focus:border-[#E7B481] transition-colors"
+              <InputField
+                label="Email"
+                type="email"
+                placeholder="hello@studio.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+
+              {!isForgotPassword && (
+                <InputField
+                  label="Password"
+                  type="password"
+                  placeholder="***************"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   required
                 />
-              </div>
-
-              {/* Input Password (Hanya muncul jika mode login) */}
-              {view === "login" && (
-                <div>
-                  <label className="block text-xs font-semibold text-[#E7B481] mb-2 uppercase tracking-wider">
-                    Password
-                  </label>
-                  <input
-                    type="password"
-                    placeholder="***************"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full bg-[#161618] border border-zinc-800 rounded-xl px-4 py-4 text-sm text-white focus:outline-none focus:border-[#E7B481] transition-colors"
-                    required
-                  />
-                </div>
               )}
 
               {/* Teks Forgot Password (Hanya muncul jika mode login) */}
@@ -137,12 +114,9 @@ function Login({ onBack, onLoginSuccess, onNavigateToSignUp }) {
               )}
 
               {/* Tombol Utama (Teks berubah sesuai mode) */}
-              <button
-                type="submit"
-                className="w-full bg-[#E7B481] text-black font-bold py-4 rounded-xl mt-8 hover:bg-[#d4a270] active:scale-[0.99] transition-all uppercase tracking-wider text-sm shadow-lg shadow-[#E7B481]/10 cursor-pointer"
-              >
+              <ButtonConfirm type="submit">
                 {view === "login" ? "Log In" : "Kirim Link Reset"}
-              </button>
+              </ButtonConfirm>
             </form>
 
             {/* Footer Bawah (Berubah sesuai mode) */}

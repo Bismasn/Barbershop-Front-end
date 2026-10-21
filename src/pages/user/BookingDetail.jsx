@@ -1,11 +1,19 @@
 import React, { useState } from "react";
-// Pastikan path api.js ini sesuai. Jika salah folder, ganti jadi "../../api"
 import { api } from "../../services/api";
+import { BackButton } from "../../components/ui/BackButton";
+import Modal from "../../components/ui/SuccessModal";
 
 function BookingDetail({ onBack, onConfirmSuccess, service, bookingData }) {
   const [paymentMethod, setPaymentMethod] = useState("QRIS");
   // TAMBAHAN: Deklarasi state loading yang sebelumnya terlupa
   const [isLoading, setIsLoading] = useState(false);
+  const [view, setView] = useState("reservasi");
+  // Ambil data user langsung dari localStorage
+  const user = JSON.parse(localStorage.getItem("user")) || {
+    name: "Akun Pengguna",
+  };
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Hitung total harga otomatis (HANYA UNTUK TAMPILAN UI DI REACT)
   // Backend akan menghitung pajaknya sendiri nanti
@@ -57,14 +65,7 @@ function BookingDetail({ onBack, onConfirmSuccess, service, bookingData }) {
       });
 
       // Jika berhasil
-      alert(
-        `Booking berhasil disimpan!\nKode Booking: ${response.data.booking_code}`,
-      );
-
-      // Jika ingin langsung pindah halaman/sukses, panggil fungsi callback jika ada
-      if (onConfirmSuccess) {
-        onConfirmSuccess(response.data);
-      }
+      setIsModalOpen(true);
     } catch (error) {
       console.error("Gagal terhubung ke server Laravel:", error);
       alert(
@@ -75,31 +76,22 @@ function BookingDetail({ onBack, onConfirmSuccess, service, bookingData }) {
     }
   };
 
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    // Balik ke beranda setelah modal ditutup
+    if (onBack) onBack();
+  };
+
   return (
     <div className="min-h-screen bg-[#0D0D0D] text-white font-sans p-6 md:p-10 flex  overflow-y-auto">
       {/* Kontainer Utama max-w-6xl */}
       <div className="w-full max-w-6xl mx-auto flex flex-col">
         {/* 1. TOP HEADER & TOMBOL KEMBALI */}
         <div className="flex items-center gap-4 mb-6">
-          <button
-            type="button"
-            onClick={onBack}
-            className="w-10 h-10 bg-[#1c1c1e] rounded-full flex items-center justify-center hover:bg-zinc-800 transition-colors cursor-pointer shrink-0"
-          >
-            <svg
-              className="w-5 h-5 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M10 19l-7-7m0 0l7-7m-7 7h18"
-              />
-            </svg>
-          </button>
+          <BackButton
+            onClick={view === "reservasi" ? () => setView("reservasi") : onBack}
+            className=""
+          />
           <div>
             <h1 className="text-xl md:text-2xl font-bold tracking-tight">
               Booking Detail
@@ -149,9 +141,9 @@ function BookingDetail({ onBack, onConfirmSuccess, service, bookingData }) {
               <span className="text-[10px] text-zinc-400 uppercase tracking-wider font-semibold block mb-2">
                 Customer Info
               </span>
-              {/* Note: Nama tidak perlu dikirim ke backend, karena backend membacanya otomatis dari Token JWT */}
+              {/* Mengambil Nama yang tersimpan di JWT Token*/}
               <p className="text-xs md:text-sm text-white font-medium">
-                Akun Pengguna
+                {user.name}
               </p>
               <p className="text-xs text-zinc-400 mt-1">
                 Notes: {bookingData?.notes || "-"}
@@ -236,6 +228,7 @@ function BookingDetail({ onBack, onConfirmSuccess, service, bookingData }) {
             >
               {isLoading ? "Processing..." : "Confirm"}
             </button>
+            <Modal isOpen={isModalOpen} onClose={handleCloseModal} />
           </div>
         </div>
       </div>

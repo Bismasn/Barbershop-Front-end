@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import UserProfile from "./UserProfile";
+import { BackButton } from "../../components/ui/BackButton";
 
-function Dashboard({ onBack, services, onNavigate }) {
+function Reservasi({ onBack, services, onNavigate }) {
   const [activeMenu, setActiveMenu] = useState("Home");
   const [userName, setUserName] = useState("User");
+  const [view, setView] = useState("welcomePage");
 
   useEffect(() => {
     const storedUserStr = localStorage.getItem("user");
@@ -25,24 +27,12 @@ function Dashboard({ onBack, services, onNavigate }) {
       <div className="w-full max-w-6xl mx-auto flex flex-col ">
         {/* 1. TOP HEADER */}
         <div className="flex justify-between items-center mb-8">
-          <button
-            onClick={onBack}
-            className="w-10 h-10 bg-[#1c1c1e] rounded-full flex items-center justify-center hover:bg-zinc-800 transition-colors cursor-pointer"
-          >
-            <svg
-              className="w-5 h-5 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M10 19l-7-7m0 0l7-7m-7 7h18"
-              />
-            </svg>
-          </button>
+          <BackButton
+            onClick={
+              view === "WelcomePage" ? () => setView("WelcomePage") : onBack
+            }
+            className=""
+          />
           <div className="flex">
             <div className="text-right mr-5">
               <button
@@ -57,9 +47,11 @@ function Dashboard({ onBack, services, onNavigate }) {
             <div className="w-10 h-10 bg-[#E7B481] rounded-full flex items-center justify-center text-black font-bold text-sm">
               <button
                 onClick={() => onNavigate("profile")}
-                className="w-10 h-10 rounded-full bg-[#E7B481}items-center justify-center cursor-pointer"
+                className="w-10 h-10 rounded-full bg-[#E7B481] flex items-center justify-center gap-2"
               >
-                <svg></svg>
+                <span className="material-symbols-outlined text-black !text-3xl leading-none select-none">
+                  Person
+                </span>
               </button>
             </div>
           </div>
@@ -246,4 +238,4 @@ function Dashboard({ onBack, services, onNavigate }) {
   );
 }
 
-export default Dashboard;
+export default Reservasi;

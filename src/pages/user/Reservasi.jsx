@@ -16,7 +16,7 @@ function Reservasi({ onBack, services, onNavigate }) {
           setUserName(parsedUser.name);
         }
       } catch (error) {
-        console.err("gagal membaca nama user:", error);
+        console.error("gagal membaca nama user:", error);
       }
     }
   }, []);
@@ -37,7 +37,7 @@ function Reservasi({ onBack, services, onNavigate }) {
             <div className="text-right mr-5">
               <button
                 onClick={() => onNavigate("profile")}
-                className="w-10 h-10 rounded-full bg-[#E7B481}items-center justify-center cursor-pointer"
+                className="w-10 h-10 rounded-full bg-[#E7B481] items-center justify-center cursor-pointer"
               >
                 <p className="text-[11px] text-zinc-400 mr-4">User</p>
                 <h2 className="text-sm font-bold tracking-wide">{userName}</h2>

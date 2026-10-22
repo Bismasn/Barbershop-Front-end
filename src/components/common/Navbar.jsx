@@ -56,37 +56,43 @@ export function Navbar({ onNavigate, onLogin }) {
       </div>
 
       {/* 2. MENU DESKTOP */}
-      <div className="hidden md:flex items-center gap-8 text-sm font-medium text-zinc-300">
-        <a href="#services" className="hover:text-[#D5A77A] transition-colors">
-          Services
-        </a>
-        <a href="#testimoni" className="hover:text-[#D5A77A] transition-colors">
-          Testimoni
-        </a>
-        <a href="#" className="hover:text-[#D5A77A] transition-colors">
-          About
-        </a>
-      </div>
 
       {/* TOMBOL PINTAR (DESKTOP) */}
       <div className="hidden md:block">
-        {isLoggedIn ? (
-          <button
-            onClick={() => onNavigate("dashboard")}
-            className="w-10 h-10 rounded-full bg-[#E7B481] flex items-center justify-center gap-2"
+        <div className="hidden md:flex items-center gap-8 text-sm font-medium text-zinc-300">
+          <a
+            href="#services"
+            className="hover:text-[#D5A77A] transition-colors"
           >
-            <span className="material-symbols-outlined text-black !text-3xl leading-none select-none">
-              Person
-            </span>
-          </button>
-        ) : (
-          <button
-            onClick={onLogin}
-            className="bg-[#E7B481] text-black px-8 py-2.5 rounded-full font-bold text-sm hover:bg-[#d4a270] active:scale-95 transition-all"
+            Services
+          </a>
+          <a
+            href="#testimoni"
+            className="hover:text-[#D5A77A] transition-colors"
           >
-            Log In
-          </button>
-        )}
+            Testimoni
+          </a>
+          <a href="#" className="hover:text-[#D5A77A] transition-colors">
+            About
+          </a>
+          {isLoggedIn ? (
+            <button
+              onClick={() => onNavigate("dashboard")}
+              className="w-10 h-10 rounded-full bg-[#E7B481] flex items-center justify-center gap-2"
+            >
+              <span className="material-symbols-outlined text-black !text-3xl leading-none select-none">
+                Person
+              </span>
+            </button>
+          ) : (
+            <button
+              onClick={onLogin}
+              className="bg-[#E7B481] text-black px-8 py-2.5 rounded-full font-bold text-sm hover:bg-[#d4a270] active:scale-95 transition-all"
+            >
+              Log In
+            </button>
+          )}
+        </div>
       </div>
 
       {/* 3. TOMBOL HAMBURGER (MOBILE) */}

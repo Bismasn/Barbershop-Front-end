@@ -89,7 +89,9 @@ function BookingDetail({ onBack, onConfirmSuccess, service, bookingData }) {
         {/* 1. TOP HEADER & TOMBOL KEMBALI */}
         <div className="flex items-center gap-4 mb-6">
           <BackButton
-            onClick={view === "reservasi" ? () => setView("reservasi") : onBack}
+            onClick={
+              view === "booking_detail" ? () => setView("reservasi") : onBack
+            }
             className=""
           />
           <div>

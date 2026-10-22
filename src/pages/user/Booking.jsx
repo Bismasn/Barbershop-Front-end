@@ -34,12 +34,12 @@ const generateDates = () => {
 const availableDates = generateDates();
 
 function Booking({ onBack, onProceed, service = {} }) {
+  const [view, setView] = useState("reservasi");
   const [selectedDate, setSelectedDate] = useState(availableDates[0].apiDate);
   const [selectedTime, setSelectedTime] = useState("");
   const [availableSlots, setAvailableSlots] = useState([]);
   const [isLoadingSlots, setIsLoadingSlots] = useState(false);
   const [notes, setNotes] = useState("");
-  const [view, setView] = useState("reservasi");
 
   // 4. Perbaikan useEffect: Hapus tutup kurung kurawal nyasar dan perbaiki setAvailableSlots(true)
   useEffect(() => {
@@ -90,7 +90,7 @@ function Booking({ onBack, onProceed, service = {} }) {
         {/* 1. TOP HEADER & TOMBOL KEMBALI (Tetap Sama) */}
         <div className="flex items-center gap-4 mb-6">
           <BackButton
-            onClick={view === "reservasi" ? () => setView("reservasi") : onBack}
+            onClick={view === "booking" ? () => setView("reservasi") : onBack}
             className=""
           />
           <div>

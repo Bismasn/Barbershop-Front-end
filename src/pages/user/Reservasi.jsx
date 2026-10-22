@@ -65,14 +65,12 @@ function Reservasi({ onBack, services, onNavigate }) {
           {/* KOLOM KIRI: Promo Banner & Services */}
           <div className="flex flex-col gap-6">
             {/* PROMO BANNER */}
-            <div className="bg-[#E7B481] text-black rounded-3xl p-6 relative overflow-hidden flex justify-between items-center shadow-lg">
-              <PromoBanner
-                tag="Limited Offer"
-                discount="20% OFF!"
-                description="Book any signature cut before Friday."
-                icon="local_fire_department"
-              />
-            </div>
+            <PromoBanner
+              tag="Limited Offer"
+              discount="20% OFF!"
+              description="Book any signature cut before Friday."
+              icon="local_fire_department"
+            />
 
             {/* SERVICES SECTION (Diubah menjadi Button Interaktif) */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

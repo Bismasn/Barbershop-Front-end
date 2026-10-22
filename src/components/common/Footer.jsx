@@ -3,7 +3,7 @@ import React from "react";
 export function Footer() {
   return (
     // Footer section
-    <footer className="pt-9 border-t border-zinc-800 pb-8">
+    <footer id="about" className="pt-9 border-t border-zinc-800 pb-8">
       <div className="flex flex-col md:flex-row gap-10 md:gap-0">
         <div className="flex-1 flex flex-col justify-between md:pr-10 md:border-r md:border-zinc-500">
           <div className="mb-10 md:mb-0">

@@ -72,12 +72,12 @@ export function Navbar({ onNavigate, onLogin }) {
           >
             Testimoni
           </a>
-          <a href="#" className="hover:text-[#D5A77A] transition-colors">
+          <a href="#about" className="hover:text-[#D5A77A] transition-colors">
             About
           </a>
           {isLoggedIn ? (
             <button
-              onClick={() => onNavigate("dashboard")}
+              onClick={() => onNavigate("reservasi")}
               className="w-10 h-10 rounded-full bg-[#E7B481] flex items-center justify-center gap-2"
             >
               <span className="material-symbols-outlined text-black !text-3xl leading-none select-none">
@@ -155,17 +155,17 @@ export function Navbar({ onNavigate, onLogin }) {
           </a>
           <a
             onClick={() => setIsMenuOpen(false)}
-            href="#"
-            className="text-[16px] font-medium text-zinc-300 hover:text-[#D5A77A] transition-colors capitalize"
-          >
-            About
-          </a>
-          <a
-            onClick={() => setIsMenuOpen(false)}
             href="#testimoni"
             className="text-[16px] font-medium text-zinc-300 hover:text-[#D5A77A] transition-colors"
           >
             Testimoni
+          </a>
+          <a
+            onClick={() => setIsMenuOpen(false)}
+            href="#about"
+            className="text-[16px] font-medium text-zinc-300 hover:text-[#D5A77A] transition-colors capitalize"
+          >
+            About
           </a>
           <div className="w-full h-[1px] bg-zinc-800 my-2"></div>
 

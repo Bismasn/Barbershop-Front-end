@@ -53,6 +53,11 @@ function ServiceCard({ service, onSelect }) {
               {service.tag}
             </span>
           )}
+          {service?.badge && (
+            <span className="text-[10px] bg-[#E7B481] text-black font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-sm">
+              {service.badge}
+            </span>
+          )}
         </div>
 
         <h3 className="font-bold text-white text-base group-hover:text-[#E7B481] transition-colors">

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { api } from "./services/api";
-import Home from "./pages/user/home";
+import Home from "./pages/user/Home";
 import SignUpUser from "./pages/user/SignUpUser";
 import Login from "./pages/user/Login";
 import UserProfile from "./pages/user/UserProfile";

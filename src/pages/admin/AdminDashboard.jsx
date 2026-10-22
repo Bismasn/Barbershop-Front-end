@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, act } from "react";
+import NavbarAdmin from "../../components/common/NavbarAdmin";
 import ManageServices from "./ManageServices";
+import Riwayat from "../../components/common/History";
 import { api } from "../../services/api";
+import ManageReservasi from "./ManageReservasi";
 
-function AdminDashboard({ services, setServices, onNavigate }) {
-  // State untuk melacak menu aktif di sidebar
+function AdminDashboard({ services, setServices, onLogout }) {
+  // --- PERBAIKAN 1: Tambahkan state isLoading ---
+  const [isLoading, setIsLoading] = useState(false);
+  const [reservations, setReservations] = useState([]);
   const [activeMenu, setActiveMenu] = useState("Dashboard");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  // --- PERBAIKAN 1: Tambahkan state isLoading ---
-  const [isLoading, setIsLoading] = useState(true);
-
-  const [reservations, setReservations] = useState([]);
 
   // --- PERBAIKAN 2 & 3: Perbaiki typo setStats & set initial state ke Object ---
   const [stats, setStats] = useState({
@@ -24,16 +24,43 @@ function AdminDashboard({ services, setServices, onNavigate }) {
       setIsLoading(true);
 
       // Tembak API Admin Laravel
-      const resData = await api("/admin/reservations");
-      const statsData = await api("/admin/stats");
+      // const [resData, statsData] = await Promise.all([
+      //   api("/admin/reservations"),
+      //   api("/admin/stats"),
+      // ]);
 
-      if (resData?.data) setReservations(resData.data);
-      if (statsData?.data) {
-        setStats({
-          totalReservations: statsData.data.total_reservations || 0,
-          totalSales: statsData.data.total_sales || 0,
-        });
-      }
+      // if (resData?.data) setReservations(resData.data);
+      // if (statsData?.data) {
+      //   setStats({
+      //     totalReservations: statsData.data.total_reservations || 0,
+      //     totalSales: statsData.data.total_sales || 0,
+      //   });
+      // }
+      const resData = await api("/admin/reservations");
+      // Catatan dari dokumen: Backend memakai paginasi Laravel, jadi array datanya
+      // biasanya ada di resData.data.data. Kita buat penanganan yang aman:
+      const daftarReservasi = resData?.data?.data || resData?.data || [];
+      setReservations(daftarReservasi);
+
+      // 2. HITUNG STATISTIK SECARA MANUAL (LOKAL)
+
+      // Ambil total dari response paginasi backend (kalau ada), atau pakai panjang array
+      const jumlahReservasi = resData?.data?.total || daftarReservasi.length;
+
+      // Hitung total penjualan dari reservasi yang sudah Paid / Completed
+      const hitungPenjualan = daftarReservasi.reduce((total, item) => {
+        if (item.payment_status === "Paid" || item.status === "Completed") {
+          // Jumlahkan field total_price dari backend
+          return total + (Number(item.total_price) || 0);
+        }
+        return total;
+      }, 0);
+
+      // 3. Masukkan hasil hitungan lokal ke dalam state stats
+      setStats({
+        totalReservations: jumlahReservasi,
+        totalSales: hitungPenjualan,
+      });
     } catch (error) {
       console.error("Gagal memuat data admin:", error.message);
     } finally {
@@ -67,84 +94,20 @@ function AdminDashboard({ services, setServices, onNavigate }) {
   return (
     // Wrapper Utama: Flexbox untuk membagi layar Kiri (Sidebar) dan Kanan (Konten)
     <div className="flex h-screen bg-[#121212] text-white overflow-hidden">
-      {/* ========================================== */}
-      {/* 1. SIDEBAR KIRI (Menu Navigasi) */}
-      {/* ========================================== */}
-
-      {/* Overlay Gelap (Klik untuk menutup) */}
-      {isMobileMenuOpen && (
-        <div
-          onClick={() => setIsMobileMenuOpen(false)}
-          className="fixed inset-0 bg-black/60 z-40 md:hidden"
-        ></div>
-      )}
-
-      {/* SIDEBAR KIRI */}
-      <aside
-        className={`fixed md:static top-0 left-0 h-full z-50 w-72 bg-[#1A1A1A] border-r border-white/5 flex flex-col transition-transform duration-300 ${
-          isMobileMenuOpen
-            ? "translate-x-0"
-            : "-translate-x-full md:translate-x-0"
-        }`}
-      >
-        {/* Tombol Tutup (X) khusus HP */}
-        <button
-          onClick={() => setIsMobileMenuOpen(false)}
-          className="absolute top-8 right-6 md:hidden text-zinc-400 hover:text-white"
-        >
-          <span className="material-symbols-outlined">close</span>
-        </button>
-
-        {/* Logo / Judul Admin */}
-        <div className="p-8 pb-10 mt-2 md:mt-0">
-          <h2 className="text-2xl font-bold tracking-wider text-white">
-            ADMIN<span className="text-[#E7B481]">PANEL</span>
-          </h2>
-        </div>
-
-        {/* List Menu */}
-        <nav className="flex-1 px-4 space-y-3">
-          {["Dashboard", "Reservasi", "Riwayat", "Services"].map((menu) => (
-            <button
-              key={menu}
-              onClick={() => {
-                setActiveMenu(menu);
-                setIsMobileMenuOpen(false);
-              }}
-              className={`w-full text-left px-6 py-4 rounded-xl font-bold transition-all ${
-                activeMenu === menu
-                  ? "bg-[#E7B481] text-black shadow-lg shadow-[#E7B481]/20"
-                  : "text-zinc-400 hover:bg-white/5 hover:text-white"
-              }`}
-            >
-              {menu}
-            </button>
-          ))}
-        </nav>
-
-        {/* Menu Pengaturan di Bawah */}
-        <div className="p-4 mt-auto">
-          <button className="w-full flex items-center justify-center gap-2 px-6 py-4 text-zinc-400 hover:text-white hover:bg-white/5 rounded-xl transition-all">
-            <span className="material-symbols-outlined !text-[20px]">
-              settings
-            </span>
-            <span className="font-medium text-sm">Pengaturan</span>
-          </button>
-        </div>
-      </aside>
-
+      {/* 1. Panggil Common NavbarAdmin */}
+      <NavbarAdmin
+        activeMenu={activeMenu}
+        onNavigate={(selectedMenu) => setActiveMenu(selectedMenu)}
+        onLogout={onLogout}
+        isMobileMenuOpen={isMobileMenuOpen}
+        setIsMobileMenuOpen={setIsMobileMenuOpen}
+      />
       {/* ========================================== */}
       {/* 2. KONTEN UTAMA KANAN (Scrollable) */}
       {/* ========================================== */}
       <main className="flex-1 h-full overflow-y-auto p-8 lg:p-12">
         {/* render tampilan berdasarkan active menu */}
-        {activeMenu === "Services" ? (
-          <ManageServices
-            services={services}
-            setServices={setServices}
-            onOpenMobileMenu={() => setIsMobileMenuOpen(true)}
-          />
-        ) : (
+        {activeMenu === "Dashboard" && (
           <>
             {/* Header Konten */}
             <header className="flex flex-col md:flex-row md:justify-between md:items-end gap-6 mb-10">
@@ -327,6 +290,23 @@ function AdminDashboard({ services, setServices, onNavigate }) {
               )}
             </section>
           </>
+        )}
+
+        {activeMenu === "Reservasi" && (
+          <ManageReservasi setIsMobileMenuOpen={setIsMobileMenuOpen} />
+        )}
+
+        {activeMenu === "Services" && (
+          <ManageServices
+            services={services}
+            setServices={setServices}
+            onOpenMobileMenu={() => setIsMobileMenuOpen(true)}
+          />
+        )}
+
+        {/* 2. Panggil di sini saat menu "Riwayat" aktif */}
+        {activeMenu === "Riwayat" && (
+          <Riwayat setIsMobileMenuOpen={setIsMobileMenuOpen} />
         )}
       </main>
     </div>

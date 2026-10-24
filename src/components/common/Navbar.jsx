@@ -47,52 +47,47 @@ export function Navbar({ onNavigate, onLogin }) {
         <div className="w-10 h-10 bg-[#E7B481] rounded-full flex items-center justify-center font-bold text-black text-xl">
           B
         </div>
-        <span
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           className="font-bold text-lg tracking-wide
 "
         >
           BARBERSHOP
-        </span>
+        </button>
       </div>
 
       {/* 2. MENU DESKTOP */}
 
       {/* TOMBOL PINTAR (DESKTOP) */}
+      <div className="hidden md:flex items-center gap-8 text-sm font-medium text-zinc-300">
+        <a href="#services" className="hover:text-[#D5A77A] transition-colors">
+          Services
+        </a>
+        <a href="#testimoni" className="hover:text-[#D5A77A] transition-colors">
+          Testimoni
+        </a>
+        <a href="#about" className="hover:text-[#D5A77A] transition-colors">
+          About
+        </a>
+      </div>
       <div className="hidden md:block">
-        <div className="hidden md:flex items-center gap-8 text-sm font-medium text-zinc-300">
-          <a
-            href="#services"
-            className="hover:text-[#D5A77A] transition-colors"
+        {isLoggedIn ? (
+          <button
+            onClick={() => onNavigate("reservasi")}
+            className="w-10 h-10 rounded-full bg-[#E7B481] flex items-center justify-center gap-2"
           >
-            Services
-          </a>
-          <a
-            href="#testimoni"
-            className="hover:text-[#D5A77A] transition-colors"
+            <span className="material-symbols-outlined text-black !text-3xl leading-none select-none">
+              Person
+            </span>
+          </button>
+        ) : (
+          <button
+            onClick={onLogin}
+            className="bg-[#E7B481] text-black px-8 py-2.5 rounded-full font-bold text-sm hover:bg-[#d4a270] active:scale-95 transition-all"
           >
-            Testimoni
-          </a>
-          <a href="#about" className="hover:text-[#D5A77A] transition-colors">
-            About
-          </a>
-          {isLoggedIn ? (
-            <button
-              onClick={() => onNavigate("reservasi")}
-              className="w-10 h-10 rounded-full bg-[#E7B481] flex items-center justify-center gap-2"
-            >
-              <span className="material-symbols-outlined text-black !text-3xl leading-none select-none">
-                Person
-              </span>
-            </button>
-          ) : (
-            <button
-              onClick={onLogin}
-              className="bg-[#E7B481] text-black px-8 py-2.5 rounded-full font-bold text-sm hover:bg-[#d4a270] active:scale-95 transition-all"
-            >
-              Log In
-            </button>
-          )}
-        </div>
+            Log In
+          </button>
+        )}
       </div>
 
       {/* 3. TOMBOL HAMBURGER (MOBILE) */}
@@ -101,33 +96,9 @@ export function Navbar({ onNavigate, onLogin }) {
         onClick={() => setIsMenuOpen(!isMenuOpen)}
       >
         {isMenuOpen ? (
-          <svg
-            className="w-7 h-7"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
+          <span className="material-symbols-outlined mr-4">close</span>
         ) : (
-          <svg
-            className="w-7 h-7"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 6h16M4 12h16M4 18h16"
-            />
-          </svg>
+          <span className="material-symbols-outlined mr-4">menu</span>
         )}
       </button>
 

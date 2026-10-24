@@ -16,13 +16,17 @@ function InputField({
   return (
     <div className="w-full flex flex-col gap-1.5">
       {label && (
-        <label className="block text-[11px] font-semibold text-[#E7B481] uppercase tracking-wider">
+        <label
+          htmlFor={name}
+          className="block text-[11px] font-semibold text-[#E7B481] uppercase tracking-wider"
+        >
           {label}
         </label>
       )}
 
       <div className="relative w-full">
         <input
+          id={name}
           type={isPassword ? (showPassword ? "text" : "password") : type}
           name={name}
           placeholder={placeholder}

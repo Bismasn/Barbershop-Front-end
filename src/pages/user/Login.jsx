@@ -5,85 +5,87 @@ import InputField from "../../components/ui/InputField";
 import ButtonConfirm from "../../components/ui/ButtonConfirm";
 
 function Login({ onBack, onLoginSuccess, onNavigateToSignUp }) {
-  // State untuk form
   const [email, setEmail] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
-
-  // State untuk mengontrol tampilan form ("login" atau "forgot")
   const [view, setView] = useState("login");
   const isForgotPassword = view === "forgot";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (view === "login") {
-      // Logic jika sedang Login
       try {
-        // 1. Tembak API Login bawaan Richi
         const res = await api("/login", {
           method: "POST",
           body: { email, password },
         });
 
-        // 2. Simpan token ke "brankas" browser (localStorage)
         saveSession(res.data.token, res.data.user);
-
-        // 3. Lempar role ke App.jsx supaya diarahkan ke halaman yang benar
-        // Ingat: Backend Richi menggunakan nama role "customer" (bukan "user") dan "admin"
         onLoginSuccess(res.data.user.role);
       } catch (error) {
-        // 4. Tangkap dan tampilkan pesan error dari backend (misal: "Email atau password salah.")
         alert(error.message);
       }
     } else {
-      // Logic jika sedang Forgot Password
       if (email) {
         alert(`Link reset password telah dikirim ke email: ${email}`);
-        setView("login"); // Kembali ke form login setelah reset
+        setView("login");
       }
     }
   };
 
   return (
-    <div className="min-h-screen md:h-screen bg-[#0D0D0D] text-white font-sans flex flex-col justify-between p-6 md:p-10 w-full overflow-hidden">
+    <div className="min-h-screen bg-[#0D0D0D] text-white font-sans flex flex-col justify-between p-6 md:p-10 w-full">
       <div className="max-w-6xl mx-auto w-full flex flex-col justify-between min-h-[90vh]">
-        {/* Tombol Kembali */}
-        <div className="w-full relative z-50">
+        {/* Top Navigation */}
+        <div className="w-full relative z-50 flex items-center justify-between">
           <BackButton
             onClick={view === "forgot" ? () => setView("login") : onBack}
           />
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-[#F2C299] rounded-lg flex items-center justify-center font-black text-[#121212] text-xs">
+              BS
+            </div>
+            <span className="font-extrabold text-sm tracking-wider text-white">
+              BARBERSHOP
+            </span>
+          </div>
         </div>
 
-        <div className="flex flex-col md:flex-row items-center justify-center my-auto w-full gap-12 md:gap-15 py-5">
-          {/* Sisi Kiri: Logo Besar */}
-          <div className="w-full md:w-1/2 flex flex-col items-center md:items-center text-center md:text-left mx-16">
-            <div className="w-36 h-36 md:w-48 md:h-48 bg-[#E7B481] rounded-3xl flex flex-col items-center justify-center text-black shadow-2xl p-6 transition-all">
-              <span className="font-extrabold text-4xl md:text-5xl tracking-wider">
+        <div className="flex flex-col md:flex-row items-center justify-center my-auto w-full gap-12 lg:gap-20 py-8">
+          {/* Left Brand Panel - Matching Figma Desktop Login */}
+          <div className="w-full md:w-1/2 flex flex-col items-center text-center">
+            <div className="w-28 h-28 md:w-36 md:h-36 bg-[#F2C299] rounded-3xl flex flex-col items-center justify-center text-[#121212] shadow-2xl p-4 mb-6">
+              <span className="font-black text-4xl md:text-5xl tracking-widest">
                 BS
               </span>
             </div>
-            <div>
-              <h1 className="text-2xl md:text-3xl font-bold mt-2 text-center py-4">
-                {view === "login" ? "Barber" : "Reset Password"}
-              </h1>
-              <p className="text-xs md:text-sm mt-0.5 font-reguler text-center max-w-xs text-zinc-400">
-                {view === "login"
-                  ? "Premium salon experience untuk perawatan rambut dan penampilan terbaikmu."
-                  : "Masukkan email yang terdaftar. Kami akan mengirimkan link untuk mereset password Anda."}
-              </p>
-            </div>
+            <h1 className="text-2xl md:text-3xl font-extrabold text-white tracking-wider mb-2">
+              BARBERSHOP
+            </h1>
+            <p className="text-xs md:text-sm text-zinc-400 max-w-sm leading-relaxed">
+              {view === "login"
+                ? "Masuk untuk mengatur reservasi dan menikmati perawatan pilihanmu."
+                : "Enter the email address connected to your account to send reset link."}
+            </p>
           </div>
 
-          {/* Sisi Kanan: Form Dinamis */}
-          <div className="w-full md:w-1/2 max-w-md flex flex-col md:mx-13">
-            <form
-              onSubmit={handleSubmit}
-              className="w-full flex flex-col gap-5 text-left"
-            >
+          {/* Right Form Card - Matching Figma login-form-card */}
+          <div className="w-full md:w-1/2 max-w-md bg-[#1E1E1E] border border-white/5 p-8 rounded-3xl shadow-2xl">
+            <div className="mb-6">
+              <h2 className="text-xl font-bold text-white mb-1">
+                {view === "login" ? "Sign in" : "Reset your password"}
+              </h2>
+              <p className="text-xs text-zinc-400">
+                {view === "login"
+                  ? "Selamat Datang Kembali, Silahkan Masukan Email & Password Kamu"
+                  : "Kami Akan Kirimkan Link Ke Email Tersebut Untuk Mengganti Password"}
+              </p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               <InputField
                 label="Email"
                 type="email"
-                placeholder="hello@studio.com"
+                placeholder="name@barbershop.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -93,54 +95,51 @@ function Login({ onBack, onLoginSuccess, onNavigateToSignUp }) {
                 <InputField
                   label="Password"
                   type="password"
-                  placeholder="***************"
+                  placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
               )}
 
-              {/* Teks Forgot Password (Hanya muncul jika mode login) */}
               {view === "login" && (
                 <div className="text-right">
                   <button
                     type="button"
                     onClick={() => setView("forgot")}
-                    className="text-xs text-zinc-400 hover:text-[#E7B481] transition-colors cursor-pointer"
+                    className="text-xs text-[#F2C299] hover:underline cursor-pointer font-medium"
                   >
                     Forgot password?
                   </button>
                 </div>
               )}
 
-              {/* Tombol Utama (Teks berubah sesuai mode) */}
-              <ButtonConfirm type="submit">
-                {view === "login" ? "Log In" : "Kirim Link Reset"}
+              <ButtonConfirm type="submit" className="">
+                {view === "login" ? "Log in" : "Send reset link"}
               </ButtonConfirm>
             </form>
 
-            {/* Footer Bawah (Berubah sesuai mode) */}
-            <div className="w-full text-center pt-5">
+            <div className="w-full text-center mt-6 pt-4 border-t border-white/5">
               {view === "login" ? (
-                <p className="text-zinc-400 text-xs text-center mt-2">
-                  Belum punya akun?{" "}
+                <p className="text-zinc-400 text-xs">
+                  Don’t have an account?{" "}
                   <button
                     type="button"
                     onClick={() => onNavigateToSignUp()}
-                    className="text-[#E7B481] font-bold hover:underline cursor-pointer"
+                    className="text-[#F2C299] font-bold hover:underline cursor-pointer ml-1"
                   >
-                    Sign Up Disini
+                    Register
                   </button>
                 </p>
               ) : (
-                <p className="text-zinc-400 text-xs text-center mt-6">
-                  Ingat passwordmu?{" "}
+                <p className="text-zinc-400 text-xs">
+                  Remember password?{" "}
                   <button
                     type="button"
                     onClick={() => setView("login")}
-                    className="text-[#E7B481] font-bold hover:underline cursor-pointer"
+                    className="text-[#F2C299] font-bold hover:underline cursor-pointer ml-1"
                   >
-                    Kembali ke Log In
+                    Return to login
                   </button>
                 </p>
               )}

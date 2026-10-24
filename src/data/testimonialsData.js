@@ -16,7 +16,7 @@ export const testimonialsData = [
   },
   {
     id: 3,
-    name: "Bima Arya",
+    name: "Bisma Semara",
     role: "Regular",
     review: "Nails treatment-nya rapi dan bersih. Recommended!",
     rating: 4,

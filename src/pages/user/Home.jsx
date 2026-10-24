@@ -51,8 +51,16 @@ function Home({ onNavigate, onLogin, testimonialsData }) {
 
         {/* SERVICES SECTION */}
         <section id="services" className="mb-24 scroll-mt-24">
-          <div className="flex justify-between items-end mb-6">
-            <h3 className="text-lg font-bold">Services</h3>
+          <div className="flex justify-between items-end mb-6 gap-5">
+            <div className="flex-1">
+              <h3 className="text-lg font-bold text-white mb-1">
+                Layanan Premium
+              </h3>
+              <p className="text-[10px] text-zinc-300 loading-relaxed">
+                Setiap potongan dirancang untuk memberikan hasil yang rapi,
+                nyaman, dan konsisten.
+              </p>
+            </div>
             <a
               href="#"
               className="text-[#D5A77A] text-[13px] font-semibold hover:underline"

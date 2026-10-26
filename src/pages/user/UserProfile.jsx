@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { api } from "../../services/api"; // Sesuaikan path jika berbeda
+import { BackButton } from "../../components/ui/BackButton";
 
 export function UserProfile({ onBack, onLogout }) {
   const [userName, setUserName] = useState("User");
@@ -94,12 +95,7 @@ export function UserProfile({ onBack, onLogout }) {
             Barbershop
           </span>
         </div>
-        <button
-          onClick={onBack}
-          className="bg-transparent border border-white/10 text-white font-bold text-xs md:text-sm px-6 py-2.5 rounded-xl hover:bg-white/5 transition-all"
-        >
-          Kembali
-        </button>
+        <BackButton onClick={onBack} className="w-auto" />
       </header>
 
       <main className="px-6 lg:px-12 max-w-7xl mx-auto flex flex-col gap-6 lg:gap-8">

@@ -1,6 +1,13 @@
 import React, { useState } from "react";
+import ActionModal from "../../components/modal/ActionModal";
 
-export default function SignUpUser({ onNavigateToLogin }) {
+export default function SignUpUser({
+  onNavigateToLogin,
+  onBack,
+  onSignUpSuccess,
+}) {
+  // 2. Tambahkan baris ini tepat di bawah deklarasi fungsi
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -16,6 +23,7 @@ export default function SignUpUser({ onNavigateToLogin }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Data Register:", formData);
+    setIsModalOpen(true);
   };
 
   return (
@@ -144,6 +152,13 @@ export default function SignUpUser({ onNavigateToLogin }) {
                 Masuk
               </button>
             </div>
+            <ActionModal
+              isOpen={isModalOpen}
+              title="Daftar Berhasil"
+              description="Selamat Datang Di Barbershop Kami!"
+              buttonText="Kembali ke Login"
+              onClick={() => setHalamanAktif("login")}
+            />
           </div>
         </div>
       </div>

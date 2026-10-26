@@ -4,9 +4,11 @@ import ButtonConfirm from "../../components/ui/ButtonConfirm";
 import { Footer } from "../../components/common/Footer";
 import { HomeServiceCard } from "../../components/card/HomeServiceCard";
 import Navbar from "../../components/common/Navbar";
+import { testimonialsData } from "../../data/testimonialsData";
 
 // Terima prop onStart dari App.jsx
-function Home({ onNavigate, onLogin, testimonialsData }) {
+function Home({ onNavigate, onLogin }) {
+  const [dataTestimoni, setDataTestimoni] = useState(testimonialsData);
   return (
     // Background utama halaman
     <div className="min-h-screen bg-[#0D0D0D] text-white font-sans flex justify-center p-3 md:p-5 md:pt-0 relative">
@@ -104,7 +106,7 @@ crop&ixlib=rb-4.1.0"
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto mb-20">
-          {testimonialsData.map((item) => (
+          {dataTestimoni?.map((item, index) => (
             <div
               key={item.id}
               className="bg-[#1A1A1A] p-6 rounded-3xl border border-white/5 flex flex-col justify-between"

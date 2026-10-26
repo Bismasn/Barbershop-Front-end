@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { api } from "../../services/api";
-import SuccessModal from "../../components/ui/SuccessModal"; // Pastikan path impor sesuai
+import SuccessModal from "../../components/modal/SuccessModal"; // Pastikan path impor sesuai
+import { BackButton } from "../../components/ui/BackButton";
 
 function BookingDetail({
   onBack,
@@ -131,10 +132,10 @@ function BookingDetail({
   };
 
   return (
-    <div className="min-h-screen bg-[#111113] text-white font-sans p-4 md:p-8 flex flex-col justify-between">
+    <div className="min-h-screen bg-[#111113] text-white font-sans p-4 px-6 md:p-8 flex flex-col justify-between">
       <div className="w-full max-w-5xl mx-auto flex flex-col gap-6">
         {/* TOP BAR / HEADER */}
-        <div className="flex items-center justify-between pb-2 border-b border-zinc-800/60">
+        <div className="w-full flex items-center justify-between pb-2 border-b border-zinc-800/60">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 bg-[#E7B481] rounded-lg flex items-center justify-center text-black font-extrabold text-xs tracking-wider">
               BS
@@ -142,14 +143,9 @@ function BookingDetail({
             <span className="font-extrabold text-base tracking-wider text-white uppercase">
               BARBERSHOP
             </span>
+            {/* Tombol Kembali */}
           </div>
-          <button
-            type="button"
-            onClick={onBack}
-            className="px-4 py-1.5 rounded-lg bg-[#E7B481] text-black font-bold text-xs hover:bg-[#d4a270] transition-colors cursor-pointer"
-          >
-            Kembali
-          </button>
+          <BackButton onClick={onBack} className="w-auto" />
         </div>
 
         {/* KONTEN UTAMA 2 KOLOM */}
@@ -221,7 +217,17 @@ function BookingDetail({
                 </div>
               </div>
             </div>
-
+            {/* CUSTOMER NOTE CARD (Hanya muncul jika pelanggan mengisi catatan) */}
+            {bookingData?.notes && (
+              <div className="bg-[#111113] border border-zinc-800/60 rounded-xl p-3.5">
+                <span className="text-[10px] text-zinc-500 font-semibold block mb-2 uppercase tracking-wider">
+                  Customer Note
+                </span>
+                <p className="text-sm text-zinc-300 leading-relaxed italic">
+                  "{bookingData.notes}"
+                </p>
+              </div>
+            )}
             {/* TOTAL PRICE ROW */}
             <div className="flex items-center justify-between pt-2">
               <span className="font-bold text-sm text-white">Total</span>

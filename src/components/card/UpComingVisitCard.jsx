@@ -1,30 +1,64 @@
 import React from "react";
 
-export function UpcomingVisitCard({ visit }) {
-  if (!visit) return null;
-
+export default function UpComingVisitCard({
+  date = "25 Oct 2026",
+  time = "09:00",
+  duration = "30 min",
+  serviceName = "Hair Wash and massage",
+  serviceDesc = "Premium treatment with scalp massage and warm towel finish.",
+  price = "Rp 25.000",
+  onViewDetails,
+}) {
   return (
-    <div className="mt-4 p-5 bg-gradient-to-br from-[#1A1A1A] to-[#0D0D0D] border border-white/5 rounded-2xl relative overflow-hidden">
-      <div className="absolute -right-4 -top-4 w-20 h-20 bg-[#E7B481]/10 rounded-full blur-xl"></div>
-      <h3 className="text-sm text-zinc-400 mb-1">Your Upcoming Visit</h3>
-      <p className="font-bold text-lg mb-4">
-        {visit.time || "Tomorrow, 14:00 PM"}
+    <div className="bg-[#1C1C1E] rounded-2xl p-6 border border-white/5 shadow-lg w-full">
+      <div className="flex justify-between items-start mb-1">
+        <h3 className="text-xl font-bold text-white">Upcoming appointment</h3>
+        <span className="bg-[#E7B481] text-black text-[11px] font-bold px-3 py-1 rounded-md uppercase tracking-wide">
+          Active
+        </span>
+      </div>
+      <p className="text-sm text-zinc-400 mb-6">
+        Your next visit is confirmed and ready for check-in.
       </p>
 
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 bg-[#E7B481] rounded-full flex items-center justify-center text-black font-bold">
-          {visit.initials || "AM"}
+      <div className="grid grid-cols-3 gap-4 mb-6">
+        <div>
+          <p className="text-xs text-zinc-500 mb-1">Date</p>
+          <p className="text-sm font-medium text-white">{date}</p>
         </div>
         <div>
-          <p className="text-sm font-semibold">
-            {visit.serviceName || "Signature Cut"}
-          </p>
-          <p className="text-xs text-zinc-400">
-            with {visit.stylistName || "Ava Morgan"}
-          </p>
+          <p className="text-xs text-zinc-500 mb-1">Time</p>
+          <p className="text-sm font-medium text-white">{time}</p>
         </div>
+        <div>
+          <p className="text-xs text-zinc-500 mb-1">Duration</p>
+          <p className="text-sm font-medium text-white">{duration}</p>
+        </div>
+      </div>
+
+      <div className="mb-6">
+        <p className="text-xs text-zinc-500 mb-2">Services</p>
+        <div className="bg-[#0F0F0F] rounded-xl p-4 flex justify-between items-center border border-white/5">
+          <div>
+            <h4 className="text-sm font-medium text-white mb-1">
+              {serviceName}
+            </h4>
+            <p className="text-xs text-zinc-400">{serviceDesc}</p>
+          </div>
+          <span className="text-sm font-medium text-white whitespace-nowrap ml-4">
+            {price}
+          </span>
+        </div>
+      </div>
+
+      <div className="flex gap-3">
+        <button
+          onClick={onViewDetails}
+          className="bg-[#E7B481] text-black text-sm font-semibold px-6 py-2.5 rounded-xl hover:bg-[#D4A37A] transition-all"
+        >
+          View details
+        </button>
       </div>
     </div>
   );
 }
-export default UpcomingVisitCard;

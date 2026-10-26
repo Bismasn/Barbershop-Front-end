@@ -145,7 +145,7 @@ export function Navbar({ onNavigate, onLogin }) {
             <button
               onClick={() => {
                 setIsMenuOpen(false);
-                onNavigate("dashboard");
+                onNavigate("reservasi");
               }}
               className="bg-[#E7B481] text-black w-full py-3 rounded-full font-bold text-sm hover:bg-[#d4a270] transition-colors"
             >

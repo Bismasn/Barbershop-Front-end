@@ -3,12 +3,16 @@ import { api, saveSession } from "../../services/api";
 import { BackButton } from "../../components/ui/BackButton";
 import InputField from "../../components/ui/InputField";
 import ButtonConfirm from "../../components/ui/ButtonConfirm";
+import ActionModal from "../../components/modal/ActionModal";
 
 function Login({ onBack, onLoginSuccess, onNavigateToSignUp }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [view, setView] = useState("login");
   const isForgotPassword = view === "forgot";
+
+  // 2. Tambahkan baris ini tepat di bawah deklarasi fungsi
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,15 +30,22 @@ function Login({ onBack, onLoginSuccess, onNavigateToSignUp }) {
       }
     } else {
       if (email) {
-        alert(`Link reset password telah dikirim ke email: ${email}`);
-        setView("login");
+        try {
+          // TODO: Hubungkan ke API sungguhan jika sudah siap
+          await api("/forgot-password", { method: "POST", body: { email } });
+
+          // Ubah state untuk memunculkan modal
+          setIsModalOpen(true);
+        } catch (error) {
+          alert("Gagal mengirim email reset: " + error.message);
+        }
       }
     }
   };
 
   return (
     <div className="min-h-screen bg-[#0D0D0D] text-white font-sans flex flex-col justify-between p-6 md:p-10 w-full">
-      <div className="max-w-6xl mx-auto w-full flex flex-col justify-between min-h-[90vh]">
+      <div className="max-w-6xl mx-auto w-full flex flex-col justify-between min-h-[90vh] z-50">
         {/* Top Navigation */}
         <div className="w-full relative z-50 flex items-center justify-between">
           <BackButton
@@ -144,6 +155,17 @@ function Login({ onBack, onLoginSuccess, onNavigateToSignUp }) {
                 </p>
               )}
             </div>
+            <ActionModal
+              isOpen={isModalOpen}
+              icon="mark_email_read" // Jika ActionModal-mu mendukung prop ikon
+              title="Email Terkirim"
+              description="Kami telah mengirimkan instruksi pemulihan kata sandi ke email Anda."
+              buttonText="Kembali ke Login"
+              onClick={() => {
+                setIsModalOpen(false); // Tutup modal
+                setView("login"); // Kembalikan form ke tampilan login
+              }}
+            />
           </div>
         </div>
       </div>

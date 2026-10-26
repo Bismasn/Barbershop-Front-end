@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import UserProfile from "./UserProfile";
 import UpcomingVisitCard from "../../components/card/UpComingVisitCard";
 import { BackButton } from "../../components/ui/BackButton";
 import { PromoBanner } from "../../components/ui/PromoBanner";
@@ -8,8 +7,6 @@ import StylistCard from "../../components/card/StylistCard";
 import { api } from "../../services/api"; // Pastikan path ini sesuai dengan lokasi helper api.js kamu
 
 function Reservasi({ onBack, services, onNavigate }) {
-  const [userName, setUserName] = useState("User");
-  const [view, setView] = useState("welcomePage");
   const scrollRef = useRef(null);
 
   // State baru untuk menampung data reservasi dari API
@@ -17,19 +14,6 @@ function Reservasi({ onBack, services, onNavigate }) {
   const [isLoadingVisit, setIsLoadingVisit] = useState(true);
 
   useEffect(() => {
-    // 1. Logika mengambil nama user dari localStorage
-    const storedUserStr = localStorage.getItem("user");
-    if (storedUserStr) {
-      try {
-        const parsedUser = JSON.parse(storedUserStr);
-        if (parsedUser.name) {
-          setUserName(parsedUser.name);
-        }
-      } catch (error) {
-        console.error("gagal membaca nama user:", error);
-      }
-    }
-
     // 2. Logika memanggil API untuk Upcoming Appointment[cite: 7]
     const fetchUpcomingVisit = async () => {
       try {
@@ -84,7 +68,7 @@ function Reservasi({ onBack, services, onNavigate }) {
   };
 
   return (
-    <div className="min-h-screen bg-[#0D0D0D] text-white font-sans p-6 md:p-6 flex justify-center overflow-x-hidden overflow-y-auto">
+    <div className="min-h-screen bg-[#0D0D0D] text-white font-sans p-4 px-6 md:p-6 flex justify-center overflow-x-hidden overflow-y-auto">
       <div className="w-full max-w-6xl mx-auto flex flex-col ">
         {/* 1. HEADER (Logo & Tombol Kembali) */}
         <header className="w-full flex items-center justify-between p-2 lg:px-1 lg:py-5 max-w-7xl mx-auto pb-5">
@@ -96,21 +80,9 @@ function Reservasi({ onBack, services, onNavigate }) {
               Barbershop
             </span>
           </div>
-          <div className="flex items-center gap-2 md:gap-3">
+          <div className="flex items-center gap-1 md:gap-3">
             {/* Tombol Kembali */}
-            <button
-              onClick={onBack}
-              className="bg-transparent md:bg-[#E7B481] border border-white/10 md:border-transparent text-white md:text-black font-bold text-sm w-10 h-10 md:w-auto md:px-6 md:py-2.5 rounded-xl hover:bg-white/5 md:hover:bg-[#D4A37A] transition-all flex items-center justify-center"
-              title="Kembali"
-            >
-              {/* Ikon untuk Mobile */}
-              <span className="material-symbols-outlined md:hidden text-lg">
-                arrow_back
-              </span>
-              {/* Teks untuk Desktop */}
-              <span className="hidden md:block">Kembali</span>
-            </button>
-
+            <BackButton onClick={onBack} className="w-auto" />
             {/* Tombol Profile */}
             <button
               onClick={() => onNavigate("profile")}
@@ -204,65 +176,13 @@ function Reservasi({ onBack, services, onNavigate }) {
             </div>
 
             {/* UPCOMING APPOINTMENT CARD SECTION */}
-            <div className="bg-[#1C1C1E] rounded-2xl p-6 border border-white/5 shadow-lg w-full">
-              {/* Header Card */}
-              <div className="flex justify-between items-start mb-1">
-                <h3 className="text-xl font-bold text-white">
-                  Upcoming appointment
-                </h3>
-                <span className="bg-[#E7B481] text-black text-[11px] font-bold px-3 py-1 rounded-md uppercase tracking-wide">
-                  Active
-                </span>
-              </div>
-              <p className="text-sm text-zinc-400 mb-6">
-                Your next visit is confirmed and ready for check-in.
-              </p>
-
-              {/* Grid Detail Waktu */}
-              <div className="grid grid-cols-3 gap-4 mb-6">
-                <div>
-                  <p className="text-xs text-zinc-500 mb-1">Date</p>
-                  <p className="text-sm font-medium text-white">25 Oct 2026</p>
-                </div>
-                <div>
-                  <p className="text-xs text-zinc-500 mb-1">Time</p>
-                  <p className="text-sm font-medium text-white">09:00</p>
-                </div>
-                <div>
-                  <p className="text-xs text-zinc-500 mb-1">Duration</p>
-                  <p className="text-sm font-medium text-white">30 min</p>
-                </div>
-              </div>
-
-              {/* Detail Services */}
-              <div className="mb-6">
-                <p className="text-xs text-zinc-500 mb-2">Services</p>
-                <div className="bg-[#0F0F0F] rounded-xl p-4 flex justify-between items-center border border-white/5">
-                  <div>
-                    <h4 className="text-sm font-medium text-white mb-1">
-                      Hair Wash and massage
-                    </h4>
-                    <p className="text-xs text-zinc-400">
-                      Premium treatment with scalp massage and warm towel
-                      finish.
-                    </p>
-                  </div>
-                  <span className="text-sm font-medium text-white whitespace-nowrap ml-4">
-                    Rp 25.000
-                  </span>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex gap-3">
-                <button className="bg-[#E7B481] text-black text-sm font-semibold px-6 py-2.5 rounded-xl hover:bg-[#D4A37A] transition-all">
-                  View details
-                </button>
-                {/* <button className="bg-transparent text-white text-sm font-semibold px-6 py-2.5 rounded-xl border border-white/10 hover:bg-white/5 transition-all">
-                  Reschedule
-                </button> */}
-              </div>
-            </div>
+            {/* Panggil komponen dan masukkan data dinamis jika ada */}
+            <UpcomingVisitCard
+              date="26 Oct 2026"
+              time="10:00"
+              price="Rp 35.000"
+              onViewDetails={() => console.log("Buka modal detail")}
+            />
           </div>
         </div>
       </div>

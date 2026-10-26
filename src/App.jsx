@@ -8,19 +8,27 @@ import Reservasi from "./pages/user/Reservasi";
 import Booking from "./pages/user/Booking";
 import BookingDetail from "./pages/user/BookingDetail";
 import AdminDashboard from "./pages/admin/AdminDashboard";
-import { testimonialsData } from "./data/testimonialsData";
+import ResetPassword from "./pages/user/ResetPassword";
 import { servicesData } from "./data/servicesData";
 
 function App() {
   const [appMode, setAppMode] = useState("user");
-  const [currentPage, setCurrentPage] = useState("home");
+
+  // Perbaikan 1: Pindahkan logika deteksi URL langsung ke state awal
+  const [currentPage, setCurrentPage] = useState(() => {
+    if (window.location.pathname.includes("/reset-password")) {
+      return "reset-password";
+    }
+    return "home";
+  });
+
   const [isCheckingSession, setIsCheckingSession] = useState(true);
 
   const [selectedService, setSelectedService] = useState(null);
   const [bookingInfo, setBookingInfo] = useState(null);
   const [services, setServices] = useState([]);
 
-  // 1. Cek Sesi Login Otomatis
+  // Perbaikan 2: Cek Sesi Login Otomatis tidak lagi membajak halaman reset
   useEffect(() => {
     const checkSession = () => {
       const token = localStorage.getItem("token");
@@ -40,10 +48,16 @@ function App() {
           console.error("Sesi tidak valid:", error);
           localStorage.removeItem("token");
           localStorage.removeItem("user");
-          setCurrentPage("home");
+          // Jangan lempar ke home jika sedang di halaman reset
+          if (!window.location.pathname.includes("/reset-password")) {
+            setCurrentPage("home");
+          }
         }
       } else {
-        setCurrentPage("home");
+        // Jangan lempar ke home jika sedang di halaman reset
+        if (!window.location.pathname.includes("/reset-password")) {
+          setCurrentPage("home");
+        }
       }
       setIsCheckingSession(false);
     };
@@ -102,12 +116,7 @@ function App() {
   return (
     <div>
       {currentPage === "home" && (
-        <Home
-          onStart={() => setCurrentPage("reservasi")}
-          onNavigate={(page) => setCurrentPage(page)}
-          onLogin={() => setCurrentPage("login")}
-          testimonialsData={testimonialsData}
-        />
+        <Home onNavigate={(page) => setCurrentPage(page)} />
       )}
 
       {currentPage === "login" && (
@@ -122,6 +131,15 @@ function App() {
               setAppMode("user");
               setCurrentPage("reservasi");
             }
+          }}
+        />
+      )}
+
+      {currentPage === "reset-password" && (
+        <ResetPassword
+          onDone={() => {
+            window.history.replaceState({}, "", "/"); // Hapus /reset-password dari URL
+            setCurrentPage("login"); // Arahkan ke login setelah sukses
           }}
         />
       )}
